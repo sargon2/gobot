@@ -24,6 +24,4 @@ RUN mkdir /tmp/backup && cp go.mod go.sum /tmp/backup/
 COPY --chown=user:user . .
 RUN cp -f /tmp/backup/* . && rm -rf /tmp/backup/
 
-RUN go mod tidy
-
 RUN go test ./...
