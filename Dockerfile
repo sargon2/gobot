@@ -6,7 +6,7 @@ ARG GROUP_ID
 RUN addgroup --gid $GROUP_ID user
 RUN adduser --disabled-password --gecos '' --uid $USER_ID --ingroup user user
 
-RUN apk add go=1.13.4-r1
+RUN apk add go=1.13.13-r0
 
 RUN mkdir /gobot
 RUN chown user:user /gobot
