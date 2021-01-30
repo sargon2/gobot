@@ -10,6 +10,8 @@ RUN apk add go=1.13.13-r0
 
 RUN mkdir /gobot
 RUN chown user:user /gobot
+RUN mkdir /opt/mount # Used for copying build results back out
+RUN chown user:user /opt/mount
 
 WORKDIR /gobot
 
@@ -25,3 +27,4 @@ COPY --chown=user:user . .
 RUN cp -f /tmp/backup/* . && rm -rf /tmp/backup/
 
 RUN go test ./...
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
