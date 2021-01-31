@@ -3,6 +3,7 @@ package gobot
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"regexp"
 	"strconv"
 	"strings"
@@ -26,7 +27,12 @@ func NewRoll(hub Hub) *Roll {
 }
 
 func (r *Roll) handleMessage(source *MessageSource, message string) {
-	// TODO
+	rolls, err := Parse(message)
+	if err != nil {
+		r.hub.Message(source, fmt.Sprintf("Error: %s", err))
+		return
+	}
+	r.hub.Message(source, strconv.Itoa(doRoll(rolls)))
 }
 
 func Parse(input string) ([]OneRoll, error) {
@@ -65,4 +71,20 @@ func Parse(input string) ([]OneRoll, error) {
 		return nil, errors.New("Parse error")
 	}
 	return ret, nil
+}
+
+func doRoll(in []OneRoll) int {
+	tot := 0
+	for _, r := range in {
+		tot += r.DoRoll()
+	}
+	return tot
+}
+
+func (r *OneRoll) DoRoll() int {
+	tot := 0
+	for i := 0; i < r.NumDice; i++ {
+		tot += rand.Intn(r.DiceSize-1) + 1
+	}
+	return tot
 }
