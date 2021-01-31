@@ -48,6 +48,8 @@ func main() {
 	go func() {
 		for evt := range client.Events {
 			switch evt.Type {
+			case socketmode.EventTypeHello:
+				fmt.Println("Received hello")
 			case socketmode.EventTypeConnecting:
 				fmt.Println("Connecting to Slack with Socket Mode...")
 			case socketmode.EventTypeConnectionError:
