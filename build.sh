@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 go test ./...
 wire cmd/gobot/main.go

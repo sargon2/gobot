@@ -12,6 +12,7 @@ import (
 type Hooks struct {
 	Hub  gobot.Hub
 	Ping *gobot.Ping
+	Roll *gobot.Roll
 }
 
 // This tells wire what type providers we have.  Ideally it would auto-detect them somehow but it doesn't support that today.
@@ -21,6 +22,7 @@ func WireHooks() (*Hooks, error) {
 		wire.Bind(new(gobot.Hub), new(*gobot.SlackHub)),
 		wire.Struct(new(Hooks), "*"),
 		gobot.NewPing,
+		gobot.NewRoll,
 	)
 	return &Hooks{}, nil // Will be magically replaced by wire.
 }
