@@ -69,9 +69,7 @@ func (s *SlackHub) RegisterBangHandler(cmd string, handler func(*MessageSource, 
 func (s *SlackHub) handleBangs(event *slackevents.MessageEvent) {
 	messageText := event.Text
 	channelID := event.Channel
-	fmt.Println("Got here")
 	for cmd, handler := range s.bangHandlers {
-		fmt.Println("Got here 2 " + messageText + " " + cmd)
 		bangCmd := "!" + cmd
 		if messageText == bangCmd || strings.HasPrefix(messageText, bangCmd+" ") {
 			source := &MessageSource{
