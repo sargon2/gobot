@@ -1,6 +1,7 @@
 package gobot
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -12,43 +13,25 @@ import (
 )
 
 type Hub interface {
-	RegisterBangHandler(string, func(MessageSource, Message))
-	Message(MessageSource, Message)
+	RegisterBangHandler(string, func(*MessageSource, string))
+	Message(*MessageSource, string)
 }
 
 type SlackHub struct {
+	api          *slack.Client
+	client       *socketmode.Client
+	bangHandlers map[string]func(*MessageSource, string)
 }
 
-func NewSlackHub() *SlackHub {
-	return &SlackHub{}
-}
-
-func (*SlackHub) Message(source MessageSource, m Message) {
-	// TODO
-}
-
-func (*SlackHub) RegisterBangHandler(cmd string, handler func(MessageSource, Message)) {
-	// TODO
-}
-
-func (*SlackHub) StartEventLoop() {
+func NewSlackHub() (*SlackHub, error) {
 	appToken := os.Getenv("SLACK_APP_TOKEN")
-	if appToken == "" {
-
-	}
-
 	if !strings.HasPrefix(appToken, "xapp-") {
-		fmt.Fprintf(os.Stderr, "SLACK_APP_TOKEN must have the prefix \"xapp-\".")
+		return nil, errors.New("SLACK_APP_TOKEN must have the prefix \"xapp-\".")
 	}
 
 	botToken := os.Getenv("SLACK_BOT_TOKEN")
-	if botToken == "" {
-		fmt.Fprintf(os.Stderr, "SLACK_BOT_TOKEN must be set.\n")
-		os.Exit(1)
-	}
-
 	if !strings.HasPrefix(botToken, "xoxb-") {
-		fmt.Fprintf(os.Stderr, "SLACK_BOT_TOKEN must have the prefix \"xoxb-\".")
+		return nil, errors.New("SLACK_BOT_TOKEN must have the prefix \"xoxb-\".")
 	}
 
 	api := slack.New(
@@ -64,8 +47,45 @@ func (*SlackHub) StartEventLoop() {
 		socketmode.OptionLog(log.New(os.Stdout, "socketmode: ", log.Lshortfile|log.LstdFlags)),
 	)
 
+	return &SlackHub{
+		api:          api,
+		client:       client,
+		bangHandlers: make(map[string]func(*MessageSource, string)),
+	}, nil
+
+}
+
+func (s *SlackHub) Message(source *MessageSource, m string) {
+	_, _, err := s.api.PostMessage(source.ChannelID, slack.MsgOptionText(m, true))
+	if err != nil {
+		fmt.Println(err) // TODO proper logging?
+	}
+}
+
+func (s *SlackHub) RegisterBangHandler(cmd string, handler func(*MessageSource, string)) {
+	s.bangHandlers[cmd] = handler
+}
+
+func (s *SlackHub) handleBangs(event *slackevents.MessageEvent) {
+	messageText := event.Text
+	channelID := event.Channel
+	fmt.Println("Got here")
+	for cmd, handler := range s.bangHandlers {
+		fmt.Println("Got here 2 " + messageText + " " + cmd)
+		bangCmd := "!" + cmd
+		if messageText == bangCmd || strings.HasPrefix(messageText, bangCmd+" ") {
+			source := &MessageSource{
+				ChannelID: channelID,
+			}
+			handler(source, messageText)
+		}
+
+	}
+}
+
+func (s *SlackHub) StartEventLoop() {
 	go func() {
-		for evt := range client.Events {
+		for evt := range s.client.Events {
 			switch evt.Type {
 			case socketmode.EventTypeHello:
 				fmt.Println("Received hello")
@@ -84,13 +104,14 @@ func (*SlackHub) StartEventLoop() {
 
 				fmt.Printf("Event received: %+v\n", eventsAPIEvent)
 
-				client.Ack(*evt.Request)
+				s.client.Ack(*evt.Request)
 
 				switch eventsAPIEvent.Type {
 				case slackevents.CallbackEvent:
 					innerEvent := eventsAPIEvent.InnerEvent
 					switch ev := innerEvent.Data.(type) {
 					case *slackevents.MessageEvent:
+						s.handleBangs(ev)
 						fmt.Printf("Message received: %+v", ev)
 					default:
 						fmt.Printf("Unsupported inner event type %T\n", innerEvent.Data)
@@ -104,5 +125,5 @@ func (*SlackHub) StartEventLoop() {
 		}
 	}()
 
-	client.Run()
+	s.client.Run()
 }

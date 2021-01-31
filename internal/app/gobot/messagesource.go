@@ -1,3 +1,5 @@
 package gobot
 
-type MessageSource interface{}
+type MessageSource struct {
+	ChannelID string
+}

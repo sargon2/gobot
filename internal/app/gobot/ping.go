@@ -12,6 +12,6 @@ func NewPing(hub Hub) *Ping {
 	return ret
 }
 
-func (p *Ping) handleMessage(source MessageSource, message Message) {
+func (p *Ping) handleMessage(source *MessageSource, message string) {
 	p.hub.Message(source, "pong")
 }
