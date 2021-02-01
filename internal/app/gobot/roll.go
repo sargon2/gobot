@@ -10,7 +10,6 @@ import (
 )
 
 // TODO:
-// - Limit number of dice to prevent DoS attack
 // - What happens if you give it negative numbers?
 // - What happens if you give it a number > an int?
 
@@ -82,6 +81,9 @@ func Parse(input string) ([]OneRoll, error) {
 			if err != nil {
 				break
 			}
+			if n > 10000 {
+				return nil, errors.New("How?")
+			}
 			ret = append(ret, OneRoll{NumDice: n, DiceSize: 1})
 		} else if len(parts) == 2 {
 			if len(parts[0]) == 0 {
@@ -95,6 +97,9 @@ func Parse(input string) ([]OneRoll, error) {
 				n, err := strconv.Atoi(parts[0]) // TODO dup'd
 				if err != nil {
 					break
+				}
+				if n > 10000 {
+					return nil, errors.New("How?")
 				}
 				s, err := strconv.Atoi(parts[1])
 				if err != nil {
