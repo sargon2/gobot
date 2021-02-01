@@ -10,7 +10,6 @@ import (
 )
 
 // TODO:
-// - What happens if you give it negative numbers?
 // - What happens if you give it a number > an int?
 
 type Roll struct {
@@ -81,7 +80,7 @@ func Parse(input string) ([]OneRoll, error) {
 			if err != nil {
 				break
 			}
-			if n > 10000 {
+			if n > 10000 || n < 0 {
 				return nil, errors.New("How?")
 			}
 			ret = append(ret, OneRoll{NumDice: n, DiceSize: 1})
@@ -92,18 +91,24 @@ func Parse(input string) ([]OneRoll, error) {
 				if err != nil {
 					break
 				}
+				if s < 0 {
+					return nil, errors.New("How?")
+				}
 				ret = append(ret, OneRoll{NumDice: 1, DiceSize: s})
 			} else {
 				n, err := strconv.Atoi(parts[0]) // TODO dup'd
 				if err != nil {
 					break
 				}
-				if n > 10000 {
+				if n > 10000 || n < 0 {
 					return nil, errors.New("How?")
 				}
 				s, err := strconv.Atoi(parts[1])
 				if err != nil {
 					break
+				}
+				if s < 0 {
+					return nil, errors.New("How?")
 				}
 				ret = append(ret, OneRoll{NumDice: n, DiceSize: s})
 			}

@@ -48,4 +48,7 @@ func TestWhatever(t *testing.T) {
 	assertParseError(t, "3d6.5")
 	assertParseError(t, "1dSTONKS")
 	assertParseError(t, "10001d6")
+	assertParseError(t, "-1d6")
+	assertParseError(t, "1d-1")
+	assertParseError(t, "-1d-1")
 }
