@@ -76,7 +76,7 @@ func (s *SlackHub) handleBangs(event *slackevents.MessageEvent) {
 			source := &MessageSource{
 				ChannelID: channelID,
 			}
-			// TODO strip bang command here
+			messageText = strings.TrimSpace(messageText[len(bangCmd):])
 			handler(source, messageText)
 		}
 

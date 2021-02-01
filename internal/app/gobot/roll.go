@@ -9,6 +9,11 @@ import (
 	"strings"
 )
 
+// TODO:
+// - Limit number of dice to prevent DoS attack
+// - What happens if you give it negative numbers?
+// - What happens if you give it a number > an int?
+
 type Roll struct {
 	hub Hub
 }
@@ -26,13 +31,36 @@ func NewRoll(hub Hub) *Roll {
 	return ret
 }
 
+func sum(in []int) int {
+	tot := 0
+	for _, n := range in {
+		tot += n
+	}
+	return tot
+}
+
+func intAryToStr(in []int) []string {
+	ret := make([]string, len(in))
+	for i, val := range in {
+		ret[i] = strconv.Itoa(val)
+	}
+	return ret
+}
+
 func (r *Roll) handleMessage(source *MessageSource, message string) {
 	rolls, err := Parse(message)
 	if err != nil {
 		r.hub.Message(source, fmt.Sprintf("Error: %s", err))
 		return
 	}
-	r.hub.Message(source, strconv.Itoa(doRoll(rolls)))
+	nums := doRolls(rolls)
+	total := sum(nums)
+	strNums := intAryToStr(nums)
+	msg := strings.Join(strNums, " + ")
+	if len(nums) > 1 {
+		msg = msg + " = " + strconv.Itoa(total)
+	}
+	r.hub.Message(source, msg)
 }
 
 func Parse(input string) ([]OneRoll, error) {
@@ -40,7 +68,7 @@ func Parse(input string) ([]OneRoll, error) {
 	re := regexp.MustCompile(` +`)
 	input = re.ReplaceAllString(input, " ") // TODO clean up all these replaces
 	input = strings.ToLower((input))
-	input = strings.ReplaceAll(input, " d", "d")
+	// input = strings.ReplaceAll(input, " d", "d")
 	input = strings.ReplaceAll(input, "d ", "d")
 	input = strings.ReplaceAll(input, "+", " ")
 	input = strings.TrimSpace(input)
@@ -56,15 +84,24 @@ func Parse(input string) ([]OneRoll, error) {
 			}
 			ret = append(ret, OneRoll{NumDice: n, DiceSize: 1})
 		} else if len(parts) == 2 {
-			n, err := strconv.Atoi(parts[0]) // TODO dup'd
-			if err != nil {
-				break
+			if len(parts[0]) == 0 {
+				// Just e.g. d6
+				s, err := strconv.Atoi(parts[1])
+				if err != nil {
+					break
+				}
+				ret = append(ret, OneRoll{NumDice: 1, DiceSize: s})
+			} else {
+				n, err := strconv.Atoi(parts[0]) // TODO dup'd
+				if err != nil {
+					break
+				}
+				s, err := strconv.Atoi(parts[1])
+				if err != nil {
+					break
+				}
+				ret = append(ret, OneRoll{NumDice: n, DiceSize: s})
 			}
-			s, err := strconv.Atoi(parts[1])
-			if err != nil {
-				break
-			}
-			ret = append(ret, OneRoll{NumDice: n, DiceSize: s})
 		}
 	}
 	if len(ret) == 0 {
@@ -73,15 +110,21 @@ func Parse(input string) ([]OneRoll, error) {
 	return ret, nil
 }
 
-func doRoll(in []OneRoll) int {
-	tot := 0
+func doRolls(in []OneRoll) []int {
+	ret := make([]int, 0)
 	for _, r := range in {
-		tot += r.DoRoll()
+		ret = append(ret, r.DoRoll())
 	}
-	return tot
+	return ret
 }
 
 func (r *OneRoll) DoRoll() int {
+	if r.DiceSize == 0 {
+		return 0
+	}
+	if r.DiceSize == 1 {
+		return r.NumDice
+	}
 	tot := 0
 	for i := 0; i < r.NumDice; i++ {
 		tot += rand.Intn(r.DiceSize-1) + 1
