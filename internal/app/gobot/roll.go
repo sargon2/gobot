@@ -132,7 +132,7 @@ func (r *OneRoll) DoRoll() int {
 	}
 	tot := 0
 	for i := 0; i < r.NumDice; i++ {
-		tot += rand.Intn(r.DiceSize-1) + 1
+		tot += rand.Intn(r.DiceSize) + 1
 	}
 	return tot
 }
