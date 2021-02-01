@@ -72,44 +72,40 @@ func Parse(input string) ([]OneRoll, error) {
 	fmt.Println(input)
 	for _, str := range strings.Split(input, " ") {
 		parts := strings.Split(str, "d")
-		if len(parts) == 1 {
-			n, err := strconv.Atoi(parts[0])
+		if len(parts) > 2 {
+			break
+		}
+
+		var n, s int
+		var err error
+		if len(parts) >= 1 {
+			if len(parts[0]) == 0 {
+				n = 1
+			} else {
+				n, err = strconv.Atoi(parts[0])
+				if err != nil {
+					break
+				}
+			}
+		}
+		if n > 10000 || n < 0 {
+			return nil, errors.New("How?")
+		}
+		if len(parts) == 2 {
+			if len(parts[1]) == 0 {
+				break
+			}
+			s, err = strconv.Atoi(parts[1])
 			if err != nil {
 				break
 			}
-			if n > 10000 || n < 0 {
-				return nil, errors.New("How?")
-			}
-			ret = append(ret, OneRoll{NumDice: n, DiceSize: 1})
-		} else if len(parts) == 2 {
-			if len(parts[0]) == 0 {
-				// Just e.g. d6
-				s, err := strconv.Atoi(parts[1])
-				if err != nil {
-					break
-				}
-				if s < 0 {
-					return nil, errors.New("How?")
-				}
-				ret = append(ret, OneRoll{NumDice: 1, DiceSize: s})
-			} else {
-				n, err := strconv.Atoi(parts[0]) // TODO dup'd
-				if err != nil {
-					break
-				}
-				if n > 10000 || n < 0 {
-					return nil, errors.New("How?")
-				}
-				s, err := strconv.Atoi(parts[1])
-				if err != nil {
-					break
-				}
-				if s < 0 {
-					return nil, errors.New("How?")
-				}
-				ret = append(ret, OneRoll{NumDice: n, DiceSize: s})
-			}
+		} else {
+			s = 1
 		}
+		if s < 0 {
+			return nil, errors.New("How?")
+		}
+		ret = append(ret, OneRoll{NumDice: n, DiceSize: s})
 	}
 	if len(ret) == 0 {
 		return nil, errors.New("Parse error")
