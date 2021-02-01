@@ -9,9 +9,6 @@ import (
 	"strings"
 )
 
-// TODO:
-// - What happens if you give it a number > an int?
-
 type Roll struct {
 	hub Hub
 }

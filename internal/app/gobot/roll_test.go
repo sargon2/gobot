@@ -41,6 +41,7 @@ func TestWhatever(t *testing.T) {
 	assertParse(t, "3 asdf 4", []OneRoll{{3, 1}})
 	assertParse(t, "d6", []OneRoll{{1, 6}})
 	assertParse(t, "d6 d8", []OneRoll{{1, 6}, {1, 8}})
+	assertParse(t, "1d9223372036854775807", []OneRoll{{1, 9223372036854775807}})
 	assertParseOneResult(t, "10000d6", 10000, 6)
 	assertParseError(t, "asdf")
 	assertParseError(t, "3d6d7")
@@ -51,4 +52,5 @@ func TestWhatever(t *testing.T) {
 	assertParseError(t, "-1d6")
 	assertParseError(t, "1d-1")
 	assertParseError(t, "-1d-1")
+	assertParseError(t, "1d9223372036854775808")
 }
