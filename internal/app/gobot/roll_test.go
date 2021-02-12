@@ -30,6 +30,8 @@ func TestWhatever(t *testing.T) {
 	assertParseOneResult(t, "3d6", 3, 6)
 	assertParseOneResult(t, "3D6", 3, 6)
 	assertParseOneResult(t, "3d6 asdf", 3, 6)
+	assertParseOneResult(t, "1d2 1=asdf 2=jkl", 1, 2)
+	assertParseOneResult(t, "1d2 1=d3 2=d4", 1, 2)
 	assertParseOneResult(t, "2d8", 2, 8)
 	assertParse(t, "2d8+4", []OneRoll{{2, 8}, {4, 1}})
 	assertParse(t, "  2  d  8  +  4  ", []OneRoll{{2, 1}, {1, 8}, {4, 1}})
