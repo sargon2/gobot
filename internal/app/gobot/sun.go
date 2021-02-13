@@ -12,7 +12,6 @@ import (
 	"github.com/sixdouglas/suncalc"
 )
 
-// Intended output: Sunrise is technically __ but there will be light at __.  Sunset is technically __ but it will be dark at __.
 // TODO swap output if you query it after sunrise?  And show the following day.
 
 type Sun struct {
