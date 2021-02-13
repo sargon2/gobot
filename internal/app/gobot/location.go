@@ -4,15 +4,18 @@ import (
 	"errors"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/jasonwinn/geocoder"
+	"github.com/zsefvlol/timezonemapper"
 )
 
 type Location struct {
-	Latitude    float64
-	Longitude   float64
-	Description string
+	Latitude     float64
+	Longitude    float64
+	Description  string
+	TimeLocation *time.Location
 }
 
 type LocationFinder struct{}
@@ -58,9 +61,12 @@ func (*LocationFinder) FindLocation(input string) (*Location, error) {
 		}
 	}
 
+	timeLocation, _ := time.LoadLocation(timezonemapper.LatLngToTimezoneString(locationToUse.LatLng.Lat, locationToUse.LatLng.Lng))
+
 	return &Location{
-		Latitude:    locationToUse.LatLng.Lat,
-		Longitude:   locationToUse.LatLng.Lng,
-		Description: strings.Join(parts, ", "),
+		Latitude:     locationToUse.LatLng.Lat,
+		Longitude:    locationToUse.LatLng.Lng,
+		Description:  strings.Join(parts, ", "),
+		TimeLocation: timeLocation,
 	}, nil
 }

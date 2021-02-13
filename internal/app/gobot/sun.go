@@ -37,8 +37,8 @@ func (t *Sun) handleMessage(source *MessageSource, message string) {
 	t.hub.Message(source, fmt.Sprint(
 		location.Description,
 		": ",
-		timeResult[suncalc.Dawn].Time.Round(time.Minute).Format("3:04pm"),
+		timeResult[suncalc.Dawn].Time.In(location.TimeLocation).Round(time.Minute).Format("3:04pm"),
 		" - ",
-		timeResult[suncalc.Dusk].Time.Round(time.Minute).Format("3:04pm"),
+		timeResult[suncalc.Dusk].Time.In(location.TimeLocation).Round(time.Minute).Format("3:04pm MST"),
 	))
 }

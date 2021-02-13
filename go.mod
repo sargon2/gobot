@@ -11,5 +11,6 @@ require (
 	github.com/sixdouglas/suncalc v0.0.0-20210131155613-475bb71c60c4
 	github.com/slack-go/slack v0.8.0
 	github.com/stretchr/testify v1.6.1
+	github.com/zsefvlol/timezonemapper v1.0.0
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 )
