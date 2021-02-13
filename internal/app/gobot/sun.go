@@ -50,7 +50,7 @@ func (t *Sun) handleMessage(source *MessageSource, message string) {
 		return
 	}
 	locations := result.Results[0].Locations
-	// Use the first location, unless any are in the US, in which case use the first of those.
+	// Choose a location.
 	// This should be in a function, but can't be because of geocoder's strange nested struct declarations.
 	locationToUse := locations[0]
 	if len(message) == 5 && govalidator.IsInt(message) { // If the user gave a zip code, limit it to the US
