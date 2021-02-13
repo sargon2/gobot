@@ -25,6 +25,7 @@ func WireHooks() (*Hooks, error) {
 		gobot.NewPing,
 		gobot.NewRoll,
 		gobot.NewSun,
+		gobot.NewLocationFinder,
 	)
 	return &Hooks{}, nil // Will be magically replaced by wire.
 }
