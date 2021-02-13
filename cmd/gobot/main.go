@@ -10,9 +10,10 @@ import (
 
 // This is what tells wire which hooks to use
 type Hooks struct {
-	Hub  gobot.Hub
-	Ping *gobot.Ping
-	Roll *gobot.Roll
+	Hub      gobot.Hub
+	Ping     *gobot.Ping
+	Roll     *gobot.Roll
+	Twilight *gobot.Sun
 }
 
 // This tells wire what type providers we have.  Ideally it would auto-detect them somehow but it doesn't support that today.
@@ -23,6 +24,7 @@ func WireHooks() (*Hooks, error) {
 		wire.Struct(new(Hooks), "*"),
 		gobot.NewPing,
 		gobot.NewRoll,
+		gobot.NewSun,
 	)
 	return &Hooks{}, nil // Will be magically replaced by wire.
 }

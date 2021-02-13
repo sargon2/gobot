@@ -37,14 +37,14 @@ func NewSlackHub() (*SlackHub, error) {
 
 	api := slack.New(
 		botToken,
-		slack.OptionDebug(true),
+		// slack.OptionDebug(true),
 		slack.OptionLog(log.New(os.Stdout, "api: ", log.Lshortfile|log.LstdFlags)),
 		slack.OptionAppLevelToken(appToken),
 	)
 
 	client := socketmode.New(
 		api,
-		socketmode.OptionDebug(true),
+		// socketmode.OptionDebug(true),
 		socketmode.OptionLog(log.New(os.Stdout, "socketmode: ", log.Lshortfile|log.LstdFlags)),
 	)
 
@@ -102,7 +102,7 @@ func (s *SlackHub) StartEventLoop() {
 					continue
 				}
 
-				fmt.Printf("Event received: %+v\n", eventsAPIEvent)
+				// fmt.Printf("Event received: %+v\n", eventsAPIEvent)
 
 				s.client.Ack(*evt.Request)
 
@@ -112,7 +112,7 @@ func (s *SlackHub) StartEventLoop() {
 					switch ev := innerEvent.Data.(type) {
 					case *slackevents.MessageEvent:
 						s.handleBangs(ev)
-						fmt.Printf("Message received: %+v", ev)
+						// fmt.Printf("Message received: %+v", ev)
 					default:
 						fmt.Printf("Unsupported inner event type %T\n", innerEvent.Data)
 					}
