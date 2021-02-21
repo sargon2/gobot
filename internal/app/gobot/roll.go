@@ -110,7 +110,22 @@ func Parse(input string) ([]OneRoll, error) {
 	if len(ret) == 0 {
 		return nil, errors.New("Parse error")
 	}
-	return ret, nil
+	return expand(ret), nil
+}
+
+// Turn e.g. 3d6 into 3 d6 rolls so you can see each
+func expand(in []OneRoll) []OneRoll {
+	out := make([]OneRoll, 0)
+	for _, roll := range in {
+		if roll.DiceSize > 1 && roll.NumDice <= 10 {
+			for i := 0; i < roll.NumDice; i++ {
+				out = append(out, OneRoll{NumDice: 1, DiceSize: roll.DiceSize})
+			}
+		} else {
+			out = append(out, roll)
+		}
+	}
+	return out
 }
 
 func doRolls(in []OneRoll) []int {
