@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
+	github.com/djdv/go-swatch v0.1.0
 	github.com/google/wire v0.5.0
 	github.com/jasonwinn/geocoder v0.0.0-20190118154513-0a8a678400b8
 	github.com/kr/pretty v0.2.0 // indirect
