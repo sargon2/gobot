@@ -10,10 +10,10 @@ import (
 
 // This is what tells wire which hooks to use
 type Hooks struct {
-	Hub      gobot.Hub
-	Ping     *gobot.Ping
-	Roll     *gobot.Roll
-	Twilight *gobot.Sun
+	Hub  gobot.Hub
+	Ping *gobot.Ping
+	Roll *gobot.Roll
+	Sun  *gobot.Sun
 }
 
 // This tells wire what type providers we have.  Ideally it would auto-detect them somehow but it doesn't support that today.
