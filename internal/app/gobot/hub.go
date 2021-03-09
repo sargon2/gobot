@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/slack-go/slack"
@@ -48,12 +49,25 @@ func NewSlackHub() (*SlackHub, error) {
 		socketmode.OptionLog(log.New(os.Stdout, "socketmode: ", log.Lshortfile|log.LstdFlags)),
 	)
 
-	return &SlackHub{
+	ret := &SlackHub{
 		api:          api,
 		client:       client,
 		bangHandlers: make(map[string]func(*MessageSource, string)),
-	}, nil
+	}
 
+	ret.RegisterBangHandler("hooks", ret.hooksHandler)
+	return ret, nil
+}
+
+func (s *SlackHub) hooksHandler(source *MessageSource, msg string) {
+	ret := make([]string, 0)
+	for cmd, _ := range s.bangHandlers {
+		if cmd != "hooks" {
+			ret = append(ret, cmd)
+		}
+	}
+	sort.Strings(ret)
+	s.Message(source, strings.Join(ret, ", "))
 }
 
 func (s *SlackHub) Message(source *MessageSource, m string) {
