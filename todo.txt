@@ -1,0 +1,10 @@
+x Rename SlackHub to SlackSocketHub
+- duplicate & make SlackEventHub
+- Deduplicate the two hubs
+- Get Lambda up and running
+- Test manual call to Lambda with ping or roll
+- Cut over to using Lambda
+  - Shut down tobu bot
+  - Disable socket mode at https://app.slack.com/app-settings/T0EUDFVLM/A01M4MYPV40/socket-mode
+  - Put in Lambda api endpoint
+- Test
