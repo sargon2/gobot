@@ -20,8 +20,8 @@ type Hooks struct {
 // This tells wire what type providers we have.  Ideally it would auto-detect them somehow but it doesn't support that today.
 func WireHooks() (*Hooks, error) {
 	wire.Build(
-		gobot.NewSlackSocketHub,
-		wire.Bind(new(gobot.Hub), new(*gobot.SlackSocketHub)),
+		gobot.NewSlackEventHub,
+		wire.Bind(new(gobot.Hub), new(*gobot.SlackEventHub)),
 		wire.Struct(new(Hooks), "*"),
 		gobot.NewPing,
 		gobot.NewRoll,
