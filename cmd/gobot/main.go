@@ -15,6 +15,7 @@ type Hooks struct {
 	Roll *gobot.Roll
 	Sun  *gobot.Sun
 	Time *gobot.Time
+	Hooks *gobot.Hooks
 }
 
 // This tells wire what type providers we have.  Ideally it would auto-detect them somehow but it doesn't support that today.
@@ -28,6 +29,7 @@ func WireHooks() (*Hooks, error) {
 		gobot.NewSun,
 		gobot.NewLocationFinder,
 		gobot.NewTime,
+		gobot.NewHooks,
 	)
 	return &Hooks{}, nil // Will be magically replaced by wire.
 }
