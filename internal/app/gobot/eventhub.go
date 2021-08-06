@@ -102,8 +102,7 @@ func (s *SlackEventHub) handleBangs(event *slackevents.MessageEvent) {
 	}
 }
 
-// Handler is our lambda handler invoked by the `lambda.Start` function call
-func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func (s *SlackEventHub) Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) { // TODO rename function
 	fmt.Printf("Got request: %v\n", request)
 
 	eventsAPIEvent, err := slackevents.ParseEvent(json.RawMessage(request.Body), slackevents.OptionNoVerifyToken())
@@ -123,6 +122,15 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			Headers:    map[string]string{"Content-Type": "text"},
 			Body:       r.Challenge,
 		}, nil
+	} else if eventsAPIEvent.Type == slackevents.CallbackEvent {
+		innerEvent := eventsAPIEvent.InnerEvent
+		switch ev := innerEvent.Data.(type) {
+		case *slackevents.MessageEvent:
+			fmt.Printf("Message received: %+v", ev)
+			s.handleBangs(ev)
+		default:
+			fmt.Printf("Unsupported inner event type %T\n", innerEvent.Data)
+		}
 	} else {
 		return events.APIGatewayProxyResponse{StatusCode: 500}, fmt.Errorf("Unrecognized event type: %v", eventsAPIEvent)
 	}
@@ -137,7 +145,7 @@ func parseBody(body string) string {
 }
 
 func (s *SlackEventHub) StartEventLoop() {
-	lambda.Start(Handler)
+	lambda.Start(s.Handler)
 	// 	go func() {
 	// 		for evt := range s.client.Events {
 	// 			switch evt.Type {
