@@ -18,11 +18,11 @@ type OneRoll struct {
 	DiceSize int
 }
 
-func NewRoll(hub Hub) *Roll {
+func NewRoll(hub Hub, hooks *Hooks) *Roll {
 	ret := &Roll{
 		hub: hub,
 	}
-	hub.RegisterBangHandler("roll", ret.handleMessage)
+	hooks.RegisterBangHandler("roll", ret.handleMessage)
 	return ret
 }
 

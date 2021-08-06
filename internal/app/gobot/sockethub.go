@@ -13,9 +13,9 @@ import (
 )
 
 type SlackSocketHub struct {
-	api          *slack.Client
-	client       *socketmode.Client
-	bangHandlers map[string]func(*MessageSource, string)
+	api             *slack.Client
+	client          *socketmode.Client
+	messageCallback func(*slackevents.MessageEvent)
 }
 
 func NewSlackSocketHub() (*SlackSocketHub, error) {
@@ -43,42 +43,21 @@ func NewSlackSocketHub() (*SlackSocketHub, error) {
 	)
 
 	ret := &SlackSocketHub{
-		api:          api,
-		client:       client,
-		bangHandlers: make(map[string]func(*MessageSource, string)),
+		api:    api,
+		client: client,
 	}
 
 	return ret, nil
+}
+
+func (s *SlackSocketHub) RegisterMessageCallback(cb func(*slackevents.MessageEvent)) {
+	s.messageCallback = cb
 }
 
 func (s *SlackSocketHub) Message(source *MessageSource, m string) {
 	_, _, err := s.api.PostMessage(source.ChannelID, slack.MsgOptionText(m, true))
 	if err != nil {
 		fmt.Println(err) // TODO proper logging?
-	}
-}
-
-func (s *SlackSocketHub) RegisterBangHandler(cmd string, handler func(*MessageSource, string)) {
-	s.bangHandlers[cmd] = handler
-}
-
-func (s *SlackSocketHub) GetBangHandlers() (map[string]func(*MessageSource, string)) {
-    return s.bangHandlers
-}
-
-func (s *SlackSocketHub) handleBangs(event *slackevents.MessageEvent) {
-	messageText := event.Text
-	channelID := event.Channel
-	for cmd, handler := range s.bangHandlers {
-		bangCmd := "!" + cmd
-		if messageText == bangCmd || strings.HasPrefix(messageText, bangCmd+" ") {
-			source := &MessageSource{
-				ChannelID: channelID,
-			}
-			messageText = strings.TrimSpace(messageText[len(bangCmd):])
-			handler(source, messageText)
-		}
-
 	}
 }
 
@@ -110,7 +89,7 @@ func (s *SlackSocketHub) StartEventLoop() {
 					innerEvent := eventsAPIEvent.InnerEvent
 					switch ev := innerEvent.Data.(type) {
 					case *slackevents.MessageEvent:
-						s.handleBangs(ev)
+						s.messageCallback(ev)
 						// fmt.Printf("Message received: %+v", ev)
 					default:
 						fmt.Printf("Unsupported inner event type %T\n", innerEvent.Data)

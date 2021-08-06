@@ -1,2 +1,3 @@
 - Deduplicate the two hubs
 - Shut down tobu bot
+- Unit tests

@@ -14,13 +14,13 @@ type Sun struct {
 	locationFinder *LocationFinder
 }
 
-func NewSun(hub Hub, locationFinder *LocationFinder) *Sun {
+func NewSun(hub Hub, hooks *Hooks, locationFinder *LocationFinder) *Sun {
 	ret := &Sun{
 		hub:            hub,
 		locationFinder: locationFinder,
 	}
 
-	hub.RegisterBangHandler("sun", ret.handleMessage)
+	hooks.RegisterBangHandler("sun", ret.handleMessage)
 
 	return ret
 }

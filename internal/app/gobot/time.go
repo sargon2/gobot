@@ -10,11 +10,11 @@ type Time struct {
 	hub Hub
 }
 
-func NewTime(hub Hub) *Time {
+func NewTime(hub Hub, hooks *Hooks) *Time {
 	ret := &Time{
 		hub: hub,
 	}
-	hub.RegisterBangHandler("time", ret.handleMessage)
+	hooks.RegisterBangHandler("time", ret.handleMessage)
 	return ret
 }
 

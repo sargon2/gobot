@@ -4,11 +4,11 @@ type Ping struct {
 	hub Hub
 }
 
-func NewPing(hub Hub) *Ping {
+func NewPing(hub Hub, hooks *Hooks) *Ping {
 	ret := &Ping{
 		hub: hub,
 	}
-	hub.RegisterBangHandler("ping", ret.handleMessage)
+	hooks.RegisterBangHandler("ping", ret.handleMessage)
 	return ret
 }
 

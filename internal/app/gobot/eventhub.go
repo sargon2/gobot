@@ -15,8 +15,8 @@ import (
 )
 
 type SlackEventHub struct {
-	api          *slack.Client
-	bangHandlers map[string]func(*MessageSource, string)
+	api             *slack.Client
+	messageCallback func(*slackevents.MessageEvent)
 }
 
 func NewSlackEventHub() (*SlackEventHub, error) {
@@ -29,40 +29,19 @@ func NewSlackEventHub() (*SlackEventHub, error) {
 
 	ret := &SlackEventHub{
 		api: api,
-		bangHandlers: make(map[string]func(*MessageSource, string)),
 	}
 
 	return ret, nil
+}
+
+func (s *SlackEventHub) RegisterMessageCallback(cb func(*slackevents.MessageEvent)) {
+	s.messageCallback = cb
 }
 
 func (s *SlackEventHub) Message(source *MessageSource, m string) {
 	_, _, err := s.api.PostMessage(source.ChannelID, slack.MsgOptionText(m, true))
 	if err != nil {
 		fmt.Println(err) // TODO proper logging?
-	}
-}
-
-func (s *SlackEventHub) RegisterBangHandler(cmd string, handler func(*MessageSource, string)) {
-	s.bangHandlers[cmd] = handler
-}
-
-func (s *SlackEventHub) GetBangHandlers() (map[string]func(*MessageSource, string)) {
-    return s.bangHandlers
-}
-
-func (s *SlackEventHub) handleBangs(event *slackevents.MessageEvent) {
-	messageText := event.Text
-	channelID := event.Channel
-	for cmd, handler := range s.bangHandlers {
-		bangCmd := "!" + cmd
-		if messageText == bangCmd || strings.HasPrefix(messageText, bangCmd+" ") {
-			source := &MessageSource{
-				ChannelID: channelID,
-			}
-			messageText = strings.TrimSpace(messageText[len(bangCmd):])
-			handler(source, messageText)
-		}
-
 	}
 }
 
@@ -91,7 +70,7 @@ func (s *SlackEventHub) Handler(ctx context.Context, request events.APIGatewayPr
 		switch ev := innerEvent.Data.(type) {
 		case *slackevents.MessageEvent:
 			// fmt.Printf("Message received: %+v", ev)
-			s.handleBangs(ev)
+			s.messageCallback(ev)
 		default:
 			fmt.Printf("Unsupported inner event type %T\n", innerEvent.Data)
 		}

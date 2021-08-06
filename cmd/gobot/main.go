@@ -10,11 +10,11 @@ import (
 
 // This is what tells wire which hooks to use
 type Hooks struct {
-	Hub  gobot.Hub
-	Ping *gobot.Ping
-	Roll *gobot.Roll
-	Sun  *gobot.Sun
-	Time *gobot.Time
+	Hub   gobot.Hub
+	Ping  *gobot.Ping
+	Roll  *gobot.Roll
+	Sun   *gobot.Sun
+	Time  *gobot.Time
 	Hooks *gobot.Hooks
 }
 

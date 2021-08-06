@@ -1,8 +1,11 @@
 package gobot
 
+import (
+	"github.com/slack-go/slack/slackevents"
+)
+
 type Hub interface {
 	StartEventLoop()
-	RegisterBangHandler(string, func(*MessageSource, string))
-	GetBangHandlers() (map[string]func(*MessageSource, string))
+	RegisterMessageCallback(func(*slackevents.MessageEvent))
 	Message(*MessageSource, string)
 }
