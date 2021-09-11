@@ -1,3 +1,4 @@
 /gobot
 /gobot.zip
 cmd/gobot/wire_gen.go
+.tested
