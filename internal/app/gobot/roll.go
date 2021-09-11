@@ -43,7 +43,7 @@ func intAryToStr(in []int) []string {
 }
 
 func (r *Roll) handleMessage(source *MessageSource, message string) {
-	rolls, err := Parse(message)
+	rolls, err := ParseRoll(message)
 	if err != nil {
 		r.hub.Message(source, fmt.Sprintf("Error: %s", err))
 		return
@@ -58,7 +58,7 @@ func (r *Roll) handleMessage(source *MessageSource, message string) {
 	r.hub.Message(source, msg)
 }
 
-func Parse(input string) ([]OneRoll, error) {
+func ParseRoll(input string) ([]OneRoll, error) {
 	ret := make([]OneRoll, 0)
 	re := regexp.MustCompile(` +`)
 	input = re.ReplaceAllString(input, " ") // TODO clean up all these replaces

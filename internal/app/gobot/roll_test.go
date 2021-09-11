@@ -7,7 +7,7 @@ import (
 )
 
 func assertParse(t *testing.T, input string, expectedRolls []OneRoll) {
-	result, err := Parse(input)
+	result, err := ParseRoll(input)
 	assert.Nil(t, err)
 	assert.Equal(t, expectedRolls, result)
 }
@@ -20,7 +20,7 @@ func assertParseOneResult(t *testing.T, input string, numDice, diceSize int) {
 }
 
 func assertParseError(t *testing.T, input string) {
-	_, err := Parse(input)
+	_, err := ParseRoll(input)
 	assert.NotNil(t, err)
 }
 
