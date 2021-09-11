@@ -1,7 +1,6 @@
 #!/bin/bash -ex
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
-cd ..
 
 ./build.sh
 zip gobot.zip gobot
