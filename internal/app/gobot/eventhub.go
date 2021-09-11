@@ -41,7 +41,7 @@ func (s *SlackEventHub) RegisterMessageCallback(cb func(*slackevents.MessageEven
 func (s *SlackEventHub) Message(source *MessageSource, m string) {
 	_, _, err := s.api.PostMessage(source.ChannelID, slack.MsgOptionText(m, true))
 	if err != nil {
-		fmt.Println(err) // TODO proper logging?
+		fmt.Println(err)
 	}
 }
 

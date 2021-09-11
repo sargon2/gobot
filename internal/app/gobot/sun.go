@@ -7,8 +7,6 @@ import (
 	"github.com/sixdouglas/suncalc"
 )
 
-// TODO swap output if you query it after sunrise?  And show the following day.
-
 type Sun struct {
 	hub            Hub
 	locationFinder *LocationFinder
