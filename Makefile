@@ -3,6 +3,11 @@ GO_FILES = $(shell find . -type f -name '*.go')
 # "make" will run the unit tests.
 # "make lambda" will upload gobot to AWS lambda.
 
+gobot: .tested $(GO_FILES)
+	$(GOPATH)/bin/wire cmd/gobot/main.go
+	go build -o gobot cmd/gobot/wire_gen.go
+	rm -f cmd/gobot/wire_gen.go
+
 .PHONY: test
 test: .tested
 
@@ -11,11 +16,6 @@ test: .tested
 .tested: $(GO_FILES)
 	go test ./...
 	@touch .tested
-
-gobot: $(GO_FILES)
-	$(GOPATH)/bin/wire cmd/gobot/main.go
-	go build -o gobot cmd/gobot/wire_gen.go
-	rm -f cmd/gobot/wire_gen.go
 
 gobot.zip: .tested gobot
 	zip gobot.zip gobot

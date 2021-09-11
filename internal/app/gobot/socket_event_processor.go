@@ -12,13 +12,13 @@ import (
 	"github.com/slack-go/slack/socketmode"
 )
 
-type SlackSocketHub struct {
+type SocketEventProcessor struct {
 	api             *slack.Client
 	client          *socketmode.Client
 	messageCallback func(*slackevents.MessageEvent)
 }
 
-func NewSlackSocketHub() (*SlackSocketHub, error) {
+func NewSlackSocketHub() (*SocketEventProcessor, error) {
 	appToken := os.Getenv("SLACK_APP_TOKEN")
 	if !strings.HasPrefix(appToken, "xapp-") {
 		return nil, errors.New("SLACK_APP_TOKEN must have the prefix \"xapp-\".")
@@ -42,7 +42,7 @@ func NewSlackSocketHub() (*SlackSocketHub, error) {
 		socketmode.OptionLog(log.New(os.Stdout, "socketmode: ", log.Lshortfile|log.LstdFlags)),
 	)
 
-	ret := &SlackSocketHub{
+	ret := &SocketEventProcessor{
 		api:    api,
 		client: client,
 	}
@@ -50,18 +50,18 @@ func NewSlackSocketHub() (*SlackSocketHub, error) {
 	return ret, nil
 }
 
-func (s *SlackSocketHub) RegisterMessageCallback(cb func(*slackevents.MessageEvent)) {
+func (s *SocketEventProcessor) RegisterMessageCallback(cb func(*slackevents.MessageEvent)) {
 	s.messageCallback = cb
 }
 
-func (s *SlackSocketHub) Message(source *MessageSource, m string) {
+func (s *SocketEventProcessor) Message(source *MessageSource, m string) {
 	_, _, err := s.api.PostMessage(source.ChannelID, slack.MsgOptionText(m, true))
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 
-func (s *SlackSocketHub) StartEventLoop() {
+func (s *SocketEventProcessor) StartEventLoop() {
 	go func() {
 		for evt := range s.client.Events {
 			switch evt.Type {

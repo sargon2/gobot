@@ -6,29 +6,35 @@ import (
 
 	"github.com/google/wire"
 	"github.com/sargon2/gobot/internal/app/gobot"
+	plugins "github.com/sargon2/gobot/internal/app/gobot/plugins"
 )
 
 // This is what tells wire which hooks to use
 type Hooks struct {
-	Hub  gobot.Hub
-	Ping *gobot.Ping
-	Roll *gobot.Roll
-	Sun  *gobot.Sun
-	Time *gobot.Time
+	EventProcessor gobot.EventProcessor
+
+	Ping  *plugins.Ping
+	Roll  *plugins.Roll
+	Sun   *plugins.Sun
+	Time  *plugins.Time
+	Hooks *plugins.Hooks
 }
 
 // This tells wire what type providers we have.  Ideally it would auto-detect them somehow but it doesn't support that today.
 func WireHooks() (*Hooks, error) {
 	wire.Build(
-		gobot.NewSlackEventHub,
-		wire.Bind(new(gobot.Hub), new(*gobot.SlackEventHub)),
+		gobot.NewLambdaEventProcessor,
+		wire.Bind(new(gobot.EventProcessor), new(*gobot.LambdaEventProcessor)),
 		wire.Struct(new(Hooks), "*"),
-		gobot.NewPing,
-		gobot.NewRoll,
-		gobot.NewSun,
 		gobot.NewLocationFinder,
-		gobot.NewTime,
-		gobot.NewHooks,
+		gobot.NewBangManager,
+		gobot.NewHub,
+
+		plugins.NewHooks,
+		plugins.NewPing,
+		plugins.NewRoll,
+		plugins.NewSun,
+		plugins.NewTime,
 	)
 	return &Hooks{}, nil // Will be magically replaced by wire.
 }
@@ -39,5 +45,5 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	hooks.Hub.StartEventLoop()
+	hooks.EventProcessor.StartProcessingEvents()
 }

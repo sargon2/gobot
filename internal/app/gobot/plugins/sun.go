@@ -4,26 +4,28 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/sargon2/gobot/internal/app/gobot"
+
 	"github.com/sixdouglas/suncalc"
 )
 
 type Sun struct {
-	hub            Hub
-	locationFinder *LocationFinder
+	hub            *gobot.Hub
+	locationFinder *gobot.LocationFinder
 }
 
-func NewSun(hub Hub, hooks *Hooks, locationFinder *LocationFinder) *Sun {
+func NewSun(hub *gobot.Hub, locationFinder *gobot.LocationFinder) *Sun {
 	ret := &Sun{
 		hub:            hub,
 		locationFinder: locationFinder,
 	}
 
-	hooks.RegisterBangHandler("sun", ret.handleMessage)
+	hub.RegisterBangHandler("sun", ret.handleMessage)
 
 	return ret
 }
 
-func (t *Sun) handleMessage(source *MessageSource, message string) {
+func (t *Sun) handleMessage(source *gobot.MessageSource, message string) {
 	location, err := t.locationFinder.FindLocation(message)
 	if err != nil {
 		t.hub.Message(source, err.Error())

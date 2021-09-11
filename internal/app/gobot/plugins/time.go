@@ -3,21 +3,23 @@ package gobot
 import (
 	"fmt"
 
+	"github.com/sargon2/gobot/internal/app/gobot"
+
 	swatch "github.com/djdv/go-swatch"
 )
 
 type Time struct {
-	hub Hub
+	hub *gobot.Hub
 }
 
-func NewTime(hub Hub, hooks *Hooks) *Time {
+func NewTime(hub *gobot.Hub) *Time {
 	ret := &Time{
 		hub: hub,
 	}
-	hooks.RegisterBangHandler("time", ret.handleMessage)
+	hub.RegisterBangHandler("time", ret.handleMessage)
 	return ret
 }
 
-func (t *Time) handleMessage(source *MessageSource, message string) {
+func (t *Time) handleMessage(source *gobot.MessageSource, message string) {
 	t.hub.Message(source, fmt.Sprintf("Swatch Internet Time: %s", swatch.Now(swatch.Centi)))
 }

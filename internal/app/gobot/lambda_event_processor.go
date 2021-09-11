@@ -14,12 +14,12 @@ import (
 	"github.com/slack-go/slack/slackevents"
 )
 
-type SlackEventHub struct {
+type LambdaEventProcessor struct {
 	api             *slack.Client
-	messageCallback func(*slackevents.MessageEvent)
+	messageCallback func(*slackevents.MessageEvent) // TODO this should be a list of callbacks
 }
 
-func NewSlackEventHub() (*SlackEventHub, error) {
+func NewLambdaEventProcessor() (*LambdaEventProcessor, error) {
 	botToken := os.Getenv("SLACK_BOT_TOKEN")
 	if !strings.HasPrefix(botToken, "xoxb-") {
 		return nil, errors.New("SLACK_BOT_TOKEN must have the prefix \"xoxb-\".")
@@ -27,25 +27,25 @@ func NewSlackEventHub() (*SlackEventHub, error) {
 
 	var api = slack.New(botToken)
 
-	ret := &SlackEventHub{
+	ret := &LambdaEventProcessor{
 		api: api,
 	}
 
 	return ret, nil
 }
 
-func (s *SlackEventHub) RegisterMessageCallback(cb func(*slackevents.MessageEvent)) {
+func (s *LambdaEventProcessor) RegisterMessageCallback(cb func(*slackevents.MessageEvent)) {
 	s.messageCallback = cb
 }
 
-func (s *SlackEventHub) Message(source *MessageSource, m string) {
+func (s *LambdaEventProcessor) Message(source *MessageSource, m string) {
 	_, _, err := s.api.PostMessage(source.ChannelID, slack.MsgOptionText(m, true))
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 
-func (s *SlackEventHub) HandleEvent(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func (s *LambdaEventProcessor) HandleEvent(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	// fmt.Printf("Got request: %v\n", request)
 
 	eventsAPIEvent, err := slackevents.ParseEvent(json.RawMessage(request.Body), slackevents.OptionNoVerifyToken())
@@ -81,6 +81,6 @@ func (s *SlackEventHub) HandleEvent(ctx context.Context, request events.APIGatew
 	return events.APIGatewayProxyResponse{StatusCode: 200}, nil
 }
 
-func (s *SlackEventHub) StartEventLoop() {
+func (s *LambdaEventProcessor) StartProcessingEvents() {
 	lambda.Start(s.HandleEvent)
 }

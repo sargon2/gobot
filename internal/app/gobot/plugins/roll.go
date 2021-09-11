@@ -7,10 +7,12 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/sargon2/gobot/internal/app/gobot"
 )
 
 type Roll struct {
-	hub Hub
+	hub *gobot.Hub
 }
 
 type OneRoll struct {
@@ -18,11 +20,11 @@ type OneRoll struct {
 	DiceSize int
 }
 
-func NewRoll(hub Hub, hooks *Hooks) *Roll {
+func NewRoll(hub *gobot.Hub) *Roll {
 	ret := &Roll{
 		hub: hub,
 	}
-	hooks.RegisterBangHandler("roll", ret.handleMessage)
+	hub.RegisterBangHandler("roll", ret.handleMessage)
 	return ret
 }
 
@@ -42,7 +44,7 @@ func intAryToStr(in []int) []string {
 	return ret
 }
 
-func (r *Roll) handleMessage(source *MessageSource, message string) {
+func (r *Roll) handleMessage(source *gobot.MessageSource, message string) {
 	rolls, err := ParseRoll(message)
 	if err != nil {
 		r.hub.Message(source, fmt.Sprintf("Error: %s", err))
