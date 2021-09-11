@@ -24,7 +24,7 @@ func assertParseError(t *testing.T, input string) {
 	assert.NotNil(t, err)
 }
 
-func TestWhatever(t *testing.T) {
+func TestParseRoll(t *testing.T) {
 	assertParseOneResult(t, "0", 0, 1)
 	assertParseOneResult(t, "3", 3, 1)
 	assertParse(t, "d6 d6 d6", []OneRoll{{1, 6}, {1, 6}, {1, 6}})
