@@ -61,15 +61,12 @@ func (r *Roll) handleMessage(source *MessageSource, message string) {
 func ParseRoll(input string) ([]OneRoll, error) {
 	ret := make([]OneRoll, 0)
 	re := regexp.MustCompile(` +`)
-	input = re.ReplaceAllString(input, " ") // TODO clean up all these replaces
+	input = re.ReplaceAllString(input, " ")
 	input = strings.ToLower((input))
-	// input = strings.ReplaceAll(input, " d", "d")
 	input = strings.ReplaceAll(input, "d ", "d")
 	input = strings.ReplaceAll(input, "+", " ")
 	input = strings.TrimSpace(input)
 	input = re.ReplaceAllString(input, " ")
-	input = strings.ToLower((input))
-	fmt.Println(input)
 	for _, str := range strings.Split(input, " ") {
 		parts := strings.Split(str, "d")
 		if len(parts) > 2 {

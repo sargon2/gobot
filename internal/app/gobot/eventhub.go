@@ -45,7 +45,7 @@ func (s *SlackEventHub) Message(source *MessageSource, m string) {
 	}
 }
 
-func (s *SlackEventHub) Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) { // TODO rename function
+func (s *SlackEventHub) HandleEvent(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	// fmt.Printf("Got request: %v\n", request)
 
 	eventsAPIEvent, err := slackevents.ParseEvent(json.RawMessage(request.Body), slackevents.OptionNoVerifyToken())
@@ -82,5 +82,5 @@ func (s *SlackEventHub) Handler(ctx context.Context, request events.APIGatewayPr
 }
 
 func (s *SlackEventHub) StartEventLoop() {
-	lambda.Start(s.Handler)
+	lambda.Start(s.HandleEvent)
 }
