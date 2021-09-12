@@ -19,19 +19,8 @@ type LambdaEventProcessor struct {
 	messageCallback func(*slackevents.MessageEvent) // TODO this should be a list of callbacks
 }
 
-func NewLambdaEventProcessor() (*LambdaEventProcessor, error) {
-	botToken := os.Getenv("SLACK_BOT_TOKEN")
-	if !strings.HasPrefix(botToken, "xoxb-") {
-		return nil, errors.New("SLACK_BOT_TOKEN must have the prefix \"xoxb-\".")
-	}
-
-	var api = slack.New(botToken)
-
-	ret := &LambdaEventProcessor{
-		api: api,
-	}
-
-	return ret, nil
+func NewLambdaEventProcessor() *LambdaEventProcessor {
+	return &LambdaEventProcessor{}
 }
 
 func (s *LambdaEventProcessor) RegisterMessageCallback(cb func(*slackevents.MessageEvent)) {
@@ -81,6 +70,14 @@ func (s *LambdaEventProcessor) HandleEvent(ctx context.Context, request events.A
 	return events.APIGatewayProxyResponse{StatusCode: 200}, nil
 }
 
-func (s *LambdaEventProcessor) StartProcessingEvents() {
+func (s *LambdaEventProcessor) StartProcessingEvents() error {
+	botToken := os.Getenv("SLACK_BOT_TOKEN")
+	if !strings.HasPrefix(botToken, "xoxb-") {
+		return errors.New("SLACK_BOT_TOKEN must have the prefix \"xoxb-\".")
+	}
+
+	s.api = slack.New(botToken)
+
 	lambda.Start(s.HandleEvent)
+	return nil
 }

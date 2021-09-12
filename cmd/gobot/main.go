@@ -24,7 +24,8 @@ type Hooks struct {
 func WireHooks() (*Hooks, error) {
 	wire.Build(
 		gobot.NewLambdaEventProcessor,
-		wire.Bind(new(gobot.EventProcessor), new(*gobot.LambdaEventProcessor)),
+		gobot.NewCliEventProcessor,
+		NewEventProcessor,
 		wire.Struct(new(Hooks), "*"),
 		gobot.NewLocationFinder,
 		gobot.NewBangManager,
@@ -39,11 +40,22 @@ func WireHooks() (*Hooks, error) {
 	return &Hooks{}, nil // Will be magically replaced by wire.
 }
 
+func NewEventProcessor(lambda *gobot.LambdaEventProcessor, cli *gobot.CliEventProcessor) gobot.EventProcessor {
+	if len(os.Args) > 1 {
+		return cli
+	} else {
+		return lambda
+	}
+}
+
 func main() {
 	hooks, err := WireHooks()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	hooks.EventProcessor.StartProcessingEvents()
+	err = hooks.EventProcessor.StartProcessingEvents()
+	if err != nil {
+		fmt.Println(err)
+	}
 }
