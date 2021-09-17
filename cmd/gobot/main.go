@@ -18,6 +18,7 @@ type Hooks struct {
 	Sun   *plugins.Sun
 	Time  *plugins.Time
 	Hooks *plugins.Hooks
+	Stock *plugins.Stock
 }
 
 // This tells wire what type providers we have.  Ideally it would auto-detect them somehow but it doesn't support that today.
@@ -36,6 +37,7 @@ func WireHooks() (*Hooks, error) {
 		plugins.NewRoll,
 		plugins.NewSun,
 		plugins.NewTime,
+		plugins.NewStock,
 	)
 	return &Hooks{}, nil // Will be magically replaced by wire.
 }

@@ -9,7 +9,9 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/jasonwinn/geocoder v0.0.0-20190118154513-0a8a678400b8
 	github.com/kr/pretty v0.2.0 // indirect
+	github.com/piquette/finance-go v1.0.0
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/sixdouglas/suncalc v0.0.0-20210131155613-475bb71c60c4
 	github.com/slack-go/slack v0.9.4
 	github.com/stretchr/testify v1.6.1
