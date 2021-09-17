@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	equity "github.com/piquette/finance-go/equity"
+	quote "github.com/piquette/finance-go/quote"
 
 	"github.com/sargon2/gobot/internal/app/gobot"
 )
@@ -29,13 +29,12 @@ func (p *Stock) handleMessage(source *gobot.MessageSource, message string) {
 	}
 	totalMsg := "```\n"
 	for _, stock := range stocks {
-		q, err := equity.Get(stock)
+		q, err := quote.Get(stock)
 		if q != nil {
 			// fmt.Printf("%+v\n", q)
 			msg := fmt.Sprintf("%50s: %s %s %s%%\n", q.ShortName+" ("+q.Symbol+")", FloatFormat(q.RegularMarketPrice), FloatFormat(q.RegularMarketChange), FloatFormat(q.RegularMarketChangePercent))
 			totalMsg += msg
 			// TODO set left-width (and right?) based on max room needed for display?
-			// TODO RegularMarketChangePercent, RegularMarketChange
 		} else {
 			if err == nil {
 				totalMsg += stock + " not found\n"
