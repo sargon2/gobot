@@ -36,17 +36,17 @@ func assertFloatFormat(t *testing.T, f float64, expected string) {
 }
 
 func TestFormatFloat(t *testing.T) {
-	assertFloatFormat(t, 1.1, "       1.1  ")
-	assertFloatFormat(t, 0.1, "       0.1  ")
-	assertFloatFormat(t, 1111111.111, " 1111111.111")
+	assertFloatFormat(t, 1.1, "1.1  ")
+	assertFloatFormat(t, 0.1, "0.1  ")
+	assertFloatFormat(t, 1111111.111, "1111111.111")
 	assertFloatFormat(t, 11111111.111, "11111111.111")
 	assertFloatFormat(t, 111111111.1111, "111111111.111")
-	assertFloatFormat(t, 1, "       1    ")
+	assertFloatFormat(t, 1, "1    ")
 
-	assertFloatFormat(t, -1.1, "      -1.1  ")
-	assertFloatFormat(t, -0.1, "      -0.1  ")
+	assertFloatFormat(t, -1.1, "-1.1  ")
+	assertFloatFormat(t, -0.1, "-0.1  ")
 	assertFloatFormat(t, -1111111.111, "-1111111.111")
 	assertFloatFormat(t, -11111111.111, "-11111111.111")
 	assertFloatFormat(t, -111111111.1111, "-111111111.111")
-	assertFloatFormat(t, -1, "      -1    ")
+	assertFloatFormat(t, -1, "-1    ")
 }
