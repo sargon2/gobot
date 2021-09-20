@@ -50,7 +50,7 @@ func (p *Stock) handleMessage(source *gobot.MessageSource, message string) {
 				q.Symbol,
 				FloatFormat(q.RegularMarketPrice),
 				FloatFormat(q.RegularMarketChange),
-				FloatFormat(q.RegularMarketChangePercent),
+				FloatFormat(q.RegularMarketChangePercent) + "%",
 			})
 		} else {
 			if err == nil {
