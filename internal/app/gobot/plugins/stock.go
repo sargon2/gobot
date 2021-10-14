@@ -76,6 +76,9 @@ func StockSplit(message string) []string {
 }
 
 func FloatFormat(f float64) string {
+	if f == 0 {
+		return "0    "
+	}
 	result := []rune(fmt.Sprintf("%.3f", f))
 	for i := len(result) - 1; result[i] == '0' || result[i] == '.'; i-- {
 		result[i] = ' '
