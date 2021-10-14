@@ -1,9 +1,9 @@
 package gobot
 
 import (
-	"fmt"
 	"regexp"
 
+	"github.com/dustin/go-humanize"
 	"github.com/jedib0t/go-pretty/table"
 	"github.com/jedib0t/go-pretty/text"
 	"github.com/piquette/finance-go/quote"
@@ -79,7 +79,8 @@ func FloatFormat(f float64) string {
 	if f == 0 {
 		return "0    "
 	}
-	result := []rune(fmt.Sprintf("%.3f", f))
+	result := []rune(humanize.FormatFloat("#,###.###", f))
+	// result := []rune(fmt.Sprintf("%.3f", f))
 	for i := len(result) - 1; result[i] == '0' || result[i] == '.'; i-- {
 		result[i] = ' '
 	}

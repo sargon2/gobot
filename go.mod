@@ -6,6 +6,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
 	github.com/aws/aws-lambda-go v1.26.0
 	github.com/djdv/go-swatch v0.1.0
+	github.com/dustin/go-humanize v1.0.0
 	github.com/go-openapi/strfmt v0.20.2 // indirect
 	github.com/google/wire v0.5.0
 	github.com/jasonwinn/geocoder v0.0.0-20190118154513-0a8a678400b8

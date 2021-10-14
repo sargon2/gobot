@@ -14,6 +14,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/djdv/go-swatch v0.1.0 h1:LhbCMPdmYLZiQBvyy8QHvYKFjSovRZItOGpw1pBe+NY=
 github.com/djdv/go-swatch v0.1.0/go.mod h1:R29hzuq2eeNJZxJTnTuRhBseI6kJSana0PBu0hP0bS4=
+github.com/dustin/go-humanize v1.0.0 h1:VSnTsYCnlFHaM2/igO1h6X3HA71jcobQuxemgkq4zYo=
+github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
 github.com/go-openapi/errors v0.19.8 h1:doM+tQdZbUm9gydV9yR+iQNmztbjj7I3sW4sIcAwIzc=
 github.com/go-openapi/errors v0.19.8/go.mod h1:cM//ZKUKyO06HSwqAelJ5NsEMMcpa6VpXe8DOa1Mi1M=
 github.com/go-openapi/strfmt v0.20.2 h1:6XZL+fF4VZYFxKQGLAUB358hOrRh/wS51uWEtlONADE=
