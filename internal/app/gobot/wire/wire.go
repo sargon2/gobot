@@ -11,6 +11,8 @@ import (
 	plugins "github.com/sargon2/gobot/internal/app/gobot/plugins"
 )
 
+var testMode bool = false
+
 // This is what tells wire which hooks to use
 type Hooks struct {
 	EventProcessor gobot.EventProcessor
@@ -26,6 +28,7 @@ type Hooks struct {
 // This tells wire what type providers we have.  Ideally it would auto-detect them somehow but it doesn't support that today.
 func WireHooks() (*Hooks, error) {
 	wire.Build(
+		gobot.NewTestEventProcessor,
 		gobot.NewLambdaEventProcessor,
 		gobot.NewCliEventProcessor,
 		NewEventProcessor,
@@ -44,39 +47,25 @@ func WireHooks() (*Hooks, error) {
 	return &Hooks{}, nil // Will be magically replaced by wire.
 }
 
-// TODO dup'd
-func WireHooksForTest() (*Hooks, error) {
-	wire.Build(
-		gobot.NewTestEventProcessor,
-		NewTestEventProcessor,
-		wire.Struct(new(Hooks), "*"),
-		gobot.NewLocationFinder,
-		gobot.NewBangManager,
-		gobot.NewHub,
+func NewEventProcessor(lambda *gobot.LambdaEventProcessor, cli *gobot.CliEventProcessor, test *gobot.TestEventProcessor) gobot.EventProcessor {
+	if testMode {
+		return test
+	}
 
-		plugins.NewHooks,
-		plugins.NewPing,
-		plugins.NewRoll,
-		plugins.NewSun,
-		plugins.NewTime,
-		plugins.NewStock,
-	)
-	return &Hooks{}, nil // Will be magically replaced by wire.
-}
-
-func NewEventProcessor(lambda *gobot.LambdaEventProcessor, cli *gobot.CliEventProcessor) gobot.EventProcessor {
 	if len(os.Args) > 1 {
 		return cli
-	} else {
-		return lambda
 	}
+
+	return lambda
 }
 
-func NewTestEventProcessor(test *gobot.TestEventProcessor) gobot.EventProcessor { // TODO this function shouldn't be needed
-	return test
+func GetTestEventProcessor() *gobot.TestEventProcessor {
+	testMode = true
+	hooks := Begin()
+	return hooks.EventProcessor.(*gobot.TestEventProcessor)
 }
 
-func Begin() {
+func Begin() *Hooks {
 	hooks, err := WireHooks()
 	if err != nil {
 		fmt.Println(err)
@@ -86,18 +75,5 @@ func Begin() {
 	if err != nil {
 		fmt.Println(err)
 	}
-}
-
-func GetTestEventProcessor() *gobot.TestEventProcessor {
-	// TODO c&p'd with Begin
-	hooks, err := WireHooksForTest() // TODO this should only be done once per test run...
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	err = hooks.EventProcessor.StartProcessingEvents()
-	if err != nil {
-		fmt.Println(err)
-	}
-	return hooks.EventProcessor.(*gobot.TestEventProcessor)
+	return hooks
 }
