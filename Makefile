@@ -1,12 +1,19 @@
+export SHELL:=/bin/bash
+export SHELLOPTS:=$(if $(SHELLOPTS),$(SHELLOPTS):)pipefail:errexit
 GO_FILES = $(shell find . -type f -name '*.go')
+
+.ONESHELL:
 
 # "make" will run the unit tests.
 # "make lambda" will upload gobot to AWS lambda.
 
 gobot: .tested $(GO_FILES)
-	$(GOPATH)/bin/wire cmd/gobot/main.go
-	go build -o gobot cmd/gobot/wire_gen.go
-	rm -f cmd/gobot/wire_gen.go
+	@function cleanup {
+		rm -f internal/app/gobot/wire/wire_gen.go
+	}
+	trap cleanup EXIT
+	$(GOPATH)/bin/wire internal/app/gobot/wire/wire.go
+	go build -o gobot cmd/gobot/main.go
 
 .PHONY: test
 test: .tested
@@ -14,8 +21,13 @@ test: .tested
 # In order to tell whether or not the code is tested or if the tests need to be re-run,
 # make needs a file timestamp.  So we create a file just to store the last tested timestamp.
 .tested: $(GO_FILES)
+	@function cleanup {
+		rm -f internal/app/gobot/wire/wire_gen.go
+	}
+	trap cleanup EXIT
+	$(GOPATH)/bin/wire internal/app/gobot/wire/wire.go
 	go test ./...
-	@touch .tested
+	touch .tested
 
 gobot.zip: .tested gobot
 	zip gobot.zip gobot
