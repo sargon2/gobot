@@ -8,6 +8,12 @@ import (
 	plugins "github.com/sargon2/gobot/internal/app/gobot/plugins"
 )
 
+// TODO:
+// - Remember who set each key
+// - How should we test with dynamodb?
+// - Should we allow multiple people to remember the same key?
+// - Make remember replace so you don't need to forget to change it
+
 func TestRemember(t *testing.T) {
 	AssertGobotResponseIs(t, "!remember asdf == jkl", "Okay, asdf == jkl")
 	AssertGobotResponseIs(t, "!whatis asdf", "jkl")
