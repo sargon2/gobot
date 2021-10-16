@@ -1,13 +1,15 @@
-package gobot
+package gobot_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	plugins "github.com/sargon2/gobot/internal/app/gobot/plugins"
 )
 
 func assertStockSplit(t *testing.T, input string, expected []string) {
-	result := StockSplit(input)
+	result := plugins.StockSplit(input)
 	assert.Equal(t, expected, result)
 }
 
@@ -31,7 +33,7 @@ func TestStockSplit(t *testing.T) {
 }
 
 func assertFloatFormat(t *testing.T, f float64, expected string) {
-	result := FloatFormat(f)
+	result := plugins.FloatFormat(f)
 	assert.Equal(t, expected, result)
 }
 
