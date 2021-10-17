@@ -8,6 +8,7 @@ import (
 )
 
 var storage map[string]string = make(map[string]string)
+var nickStorage map[string]string = make(map[string]string)
 
 type Remember struct {
 	hub *gobot.Hub
@@ -30,6 +31,7 @@ func (p *Remember) handleRemember(source *gobot.MessageSource, message string) {
 		return
 	}
 	storage[key] = value
+	nickStorage[key] = source.Username
 	p.hub.Message(source, "Okay, "+key+" == "+value)
 }
 
@@ -40,7 +42,8 @@ func (p *Remember) handleWhatis(source *gobot.MessageSource, message string) {
 		return
 	}
 	if value, ok := storage[message]; ok {
-		p.hub.Message(source, value)
+		nick := nickStorage[message]
+		p.hub.Message(source, nick+" taught me that "+message+" == "+value)
 		return
 	}
 	p.hub.Message(source, message+" not found")

@@ -9,14 +9,14 @@ import (
 )
 
 // TODO:
-// - Remember who set each key
 // - How should we test with dynamodb?
 // - Should we allow multiple people to remember the same key?
 // - Make remember replace so you don't need to forget to change it
+// - Fuzzy lookups; !whatis thing should match "the thing"
 
 func TestRemember(t *testing.T) {
 	AssertGobotResponseIs(t, "!remember asdf == jkl", "Okay, asdf == jkl")
-	AssertGobotResponseIs(t, "!whatis asdf", "jkl")
+	AssertGobotResponseIs(t, "!whatis asdf", "tests taught me that asdf == jkl")
 	AssertGobotResponseIs(t, "!forget asdf", "Okay, forgot that asdf == jkl")
 	AssertGobotResponseIs(t, "!whatis asdf", "asdf not found")
 }
