@@ -16,7 +16,7 @@ require (
 	github.com/piquette/finance-go v1.0.0
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/sixdouglas/suncalc v0.0.0-20210131155613-475bb71c60c4
-	github.com/slack-go/slack v0.9.4
+	github.com/slack-go/slack v0.9.5
 	github.com/stretchr/testify v1.6.1
 	github.com/zsefvlol/timezonemapper v1.0.0
 )

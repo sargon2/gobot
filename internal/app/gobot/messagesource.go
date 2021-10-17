@@ -2,6 +2,7 @@ package gobot
 
 type MessageSource struct {
 	ChannelID string
+	Username  string
 	response  string // for testing
 }
 

@@ -26,12 +26,12 @@ func (h *BangManager) RegisterBangHandler(cmd string, handler func(*MessageSourc
 
 func (h *BangManager) handleBangs(event *slackevents.MessageEvent) {
 	messageText := event.Text
-	channelID := event.Channel
 	for cmd, handler := range h.bangHandlers {
 		bangCmd := "!" + cmd
 		if messageText == bangCmd || strings.HasPrefix(messageText, bangCmd+" ") {
 			source := &MessageSource{
-				ChannelID: channelID,
+				ChannelID: event.Channel,
+				Username:  h.eventProcessor.GetUsername(event.User),
 			}
 			messageText = strings.TrimSpace(messageText[len(bangCmd):])
 			handler(source, messageText)

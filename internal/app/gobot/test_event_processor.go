@@ -17,9 +17,14 @@ func NewTestEventProcessor() *TestEventProcessor {
 	return ret
 }
 
+func (s *TestEventProcessor) GetUsername(userID string) string {
+	return userID
+}
+
 func (s *TestEventProcessor) GetResponseFor(input string) string {
 	ev := &slackevents.MessageEvent{
 		Text: input,
+		User: "tests",
 	}
 	s.messageCallback(ev)
 

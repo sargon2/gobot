@@ -23,6 +23,17 @@ func NewLambdaEventProcessor() *LambdaEventProcessor {
 	return &LambdaEventProcessor{}
 }
 
+func (s *LambdaEventProcessor) GetUsername(userID string) string {
+	user, err := s.api.GetUserInfo(userID)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	if err != nil || user == nil {
+		return userID
+	}
+	return user.Name
+}
+
 func (s *LambdaEventProcessor) RegisterMessageCallback(cb func(*slackevents.MessageEvent)) {
 	s.messageCallback = cb
 }

@@ -20,6 +20,10 @@ func NewCliEventProcessor() *CliEventProcessor {
 	return ret
 }
 
+func (s *CliEventProcessor) GetUsername(userID string) string {
+	return userID
+}
+
 func (s *CliEventProcessor) RegisterMessageCallback(cb func(*slackevents.MessageEvent)) {
 	s.messageCallback = cb
 }
@@ -33,6 +37,7 @@ func (s *CliEventProcessor) StartProcessingEvents() error {
 	command := strings.Join(os.Args[1:], " ")
 	ev := &slackevents.MessageEvent{
 		Text: command,
+		User: "cli",
 	}
 	s.messageCallback(ev)
 	return nil

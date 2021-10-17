@@ -17,5 +17,5 @@ func NewPing(hub *gobot.Hub) *Ping {
 }
 
 func (p *Ping) handleMessage(source *gobot.MessageSource, message string) {
-	p.hub.Message(source, "pong")
+	p.hub.Message(source, "pong "+source.Username)
 }

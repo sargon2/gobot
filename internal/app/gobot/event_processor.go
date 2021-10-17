@@ -6,4 +6,5 @@ type EventProcessor interface {
 	StartProcessingEvents() error
 	RegisterMessageCallback(func(*slackevents.MessageEvent))
 	Message(*MessageSource, string)
+	GetUsername(userID string) string
 }
