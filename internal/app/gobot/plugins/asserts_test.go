@@ -8,18 +8,16 @@ import (
 	wire "github.com/sargon2/gobot/internal/app/gobot/wire"
 )
 
-func AssertGobotResponseContains(t *testing.T, input string, expectedOutput string) {
+func RunGobotCommand(input string) string {
 	testEventProcessor := wire.GetTestEventProcessor()
 
-	output := testEventProcessor.GetResponseFor(input)
+	return testEventProcessor.GetResponseFor(input)
+}
 
-	assert.Contains(t, output, expectedOutput)
+func AssertGobotResponseContains(t *testing.T, input string, expectedOutput string) {
+	assert.Contains(t, RunGobotCommand(input), expectedOutput)
 }
 
 func AssertGobotResponseIs(t *testing.T, input string, expectedOutput string) {
-	testEventProcessor := wire.GetTestEventProcessor()
-
-	output := testEventProcessor.GetResponseFor(input)
-
-	assert.Equal(t, expectedOutput, output)
+	assert.Equal(t, expectedOutput, RunGobotCommand(input))
 }

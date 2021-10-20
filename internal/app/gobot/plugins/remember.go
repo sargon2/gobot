@@ -12,11 +12,19 @@ var nickStorage map[string]string = make(map[string]string)
 
 type Remember struct {
 	hub *gobot.Hub
+	db  *gobot.Database
 }
 
-func NewRemember(hub *gobot.Hub) *Remember {
+type RememberRow struct {
+	Key      string
+	Username string
+	Value    string
+}
+
+func NewRemember(hub *gobot.Hub, db *gobot.Database) *Remember {
 	ret := &Remember{
 		hub: hub,
+		db:  db,
 	}
 	hub.RegisterBangHandler("remember", ret.handleRemember)
 	hub.RegisterBangHandler("whatis", ret.handleWhatis)
@@ -30,6 +38,7 @@ func (p *Remember) handleRemember(source *gobot.MessageSource, message string) {
 		p.hub.Message(source, err.Error())
 		return
 	}
+	p.db.Put("remember", &RememberRow{Key: key, Username: source.Username, Value: value})
 	storage[key] = value
 	nickStorage[key] = source.Username
 	p.hub.Message(source, "Okay, "+key+" == "+value)
@@ -41,9 +50,9 @@ func (p *Remember) handleWhatis(source *gobot.MessageSource, message string) {
 		p.hub.Message(source, "Usage: !whatis <key>")
 		return
 	}
-	if value, ok := storage[message]; ok {
-		nick := nickStorage[message]
-		p.hub.Message(source, nick+" taught me that "+message+" == "+value)
+	item := &RememberRow{}
+	if ok := p.db.Get("remember", item, message); ok { // TODO searching
+		p.hub.Message(source, item.Username+" taught me that "+item.Key+" == "+item.Value)
 		return
 	}
 	p.hub.Message(source, message+" not found")
@@ -55,9 +64,14 @@ func (p *Remember) handleForget(source *gobot.MessageSource, message string) {
 		p.hub.Message(source, "Usage: !forget <key>")
 		return
 	}
-	if value, ok := storage[message]; ok {
-		delete(storage, message)
-		p.hub.Message(source, "Okay, forgot that "+message+" == "+value)
+	item := &RememberRow{}
+	if ok := p.db.Get("remember", item, message); ok {
+		deleted := p.db.Delete("remember", item.Key)
+		if deleted {
+			p.hub.Message(source, "Okay, forgot that "+item.Key+" == "+item.Value)
+			return
+		}
+		p.hub.Message(source, "Oops, failed to delete")
 		return
 	}
 	p.hub.Message(source, message+" not found")

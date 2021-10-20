@@ -37,6 +37,7 @@ func WireHooks() (*Hooks, error) {
 		gobot.NewLocationFinder,
 		gobot.NewBangManager,
 		gobot.NewHub,
+		gobot.NewDatabase,
 
 		plugins.NewHooks,
 		plugins.NewPing,

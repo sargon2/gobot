@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
 	github.com/aws/aws-lambda-go v1.26.0
+	github.com/aws/aws-sdk-go v1.34.28
 	github.com/djdv/go-swatch v0.1.0
 	github.com/dustin/go-humanize v1.0.0
 	github.com/go-openapi/strfmt v0.20.2 // indirect

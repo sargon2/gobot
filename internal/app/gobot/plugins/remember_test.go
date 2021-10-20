@@ -15,6 +15,7 @@ import (
 // - Fuzzy lookups; !whatis thing should match "the thing"
 
 func TestRemember(t *testing.T) {
+	RunGobotCommand("!forget asdf")
 	AssertGobotResponseIs(t, "!remember asdf == jkl", "Okay, asdf == jkl")
 	AssertGobotResponseIs(t, "!whatis asdf", "tests taught me that asdf == jkl")
 	AssertGobotResponseIs(t, "!forget asdf", "Okay, forgot that asdf == jkl")
