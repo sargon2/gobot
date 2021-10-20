@@ -23,11 +23,11 @@ func NewDatabase() *Database {
 	}
 }
 
-func (d *Database) Put(tablename string, data interface{}) {
+func (d *Database) Put(tablename string, data interface{}) bool {
 	item, err := dynamodbattribute.MarshalMap(data)
 	if err != nil {
 		fmt.Printf("Error in Put: %v\n", err)
-		return
+		return false
 	}
 	var putItemInput = &dynamodb.PutItemInput{
 		Item:      item,
@@ -36,7 +36,9 @@ func (d *Database) Put(tablename string, data interface{}) {
 	_, err = d.svc.PutItem(putItemInput)
 	if err != nil {
 		fmt.Printf("Error in Put: %v\n", err)
+		return false
 	}
+	return true
 }
 
 func (d *Database) Get(tablename string, item interface{}, key string) bool {

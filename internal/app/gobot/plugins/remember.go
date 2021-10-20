@@ -7,9 +7,6 @@ import (
 	"github.com/sargon2/gobot/internal/app/gobot"
 )
 
-var storage map[string]string = make(map[string]string)
-var nickStorage map[string]string = make(map[string]string)
-
 type Remember struct {
 	hub *gobot.Hub
 	db  *gobot.Database
@@ -38,10 +35,11 @@ func (p *Remember) handleRemember(source *gobot.MessageSource, message string) {
 		p.hub.Message(source, err.Error())
 		return
 	}
-	p.db.Put("remember", &RememberRow{Key: key, Username: source.Username, Value: value})
-	storage[key] = value
-	nickStorage[key] = source.Username
-	p.hub.Message(source, "Okay, "+key+" == "+value)
+	if ok := p.db.Put("remember", &RememberRow{Key: key, Username: source.Username, Value: value}); ok {
+		p.hub.Message(source, "Okay, "+key+" == "+value)
+		return
+	}
+	p.hub.Message(source, "Oops, failed to remember")
 }
 
 func (p *Remember) handleWhatis(source *gobot.MessageSource, message string) {
