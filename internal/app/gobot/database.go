@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 )
 
 type Database struct {
@@ -39,6 +40,30 @@ func (d *Database) Put(tablename string, data interface{}) bool {
 		return false
 	}
 	return true
+}
+
+func (d *Database) GetAllContains(tablename string, field string, substr string) ([]map[string]*dynamodb.AttributeValue, error) {
+	filter := expression.Contains(expression.Name(field), substr)
+	expr, err := expression.NewBuilder().WithFilter(filter).Build()
+
+	if err != nil {
+		fmt.Printf("Error in GetAllKeyContains expr: %v\n", err)
+		return nil, err
+	}
+	scanInput := &dynamodb.ScanInput{
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		FilterExpression:          expr.Filter(),
+		ProjectionExpression:      expr.Projection(),
+		TableName:                 aws.String(tablename),
+	}
+	scanOutput, err := d.svc.Scan(scanInput)
+	if err != nil {
+		fmt.Printf("Error in GetAllKeyContains scan: %v\n", err)
+		return nil, err
+	}
+
+	return scanOutput.Items, nil
 }
 
 func (d *Database) Get(tablename string, item interface{}, key string) bool {
