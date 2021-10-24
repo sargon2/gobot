@@ -53,6 +53,15 @@ func TestSearching(t *testing.T) {
 	RunGobotCommand("!forget asdf3")
 }
 
+func TestReplace(t *testing.T) {
+	RunGobotCommand("!forget asdf")
+	AssertGobotResponseIs(t, "!remember asdf == jkl", "Okay, asdf == jkl")
+	AssertGobotResponseIs(t, "!whatis asdf", "tests taught me that asdf == jkl")
+	AssertGobotResponseIs(t, "!remember asdf == jkl2", "Okay, asdf == jkl2\n(was: jkl by tests)")
+	AssertGobotResponseIs(t, "!whatis asdf", "tests taught me that asdf == jkl2")
+	RunGobotCommand("!forget asdf")
+}
+
 func assertParseRememberMessage(t *testing.T, input string, expectedKey string, expectedValue string) {
 	key, value, err := plugins.ParseRememberMessage(input)
 	assert.Nil(t, err)

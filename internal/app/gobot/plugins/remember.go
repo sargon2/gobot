@@ -44,8 +44,15 @@ func (p *Remember) handleRemember(source *gobot.MessageSource, message string) {
 		p.hub.Message(source, err.Error())
 		return
 	}
+
+	append := ""
+	item := &RememberRow{}
+	if ok := p.db.Get(p.tableName, item, key); ok {
+		append = "\n(was: " + item.Value + " by " + item.Username + ")"
+	}
+
 	if ok := p.db.Put(p.tableName, &RememberRow{Key: key, Username: source.Username, Value: value}); ok {
-		p.hub.Message(source, "Okay, "+key+" == "+value)
+		p.hub.Message(source, "Okay, "+key+" == "+value+append)
 		return
 	}
 	p.hub.Message(source, "Oops, failed to remember")
