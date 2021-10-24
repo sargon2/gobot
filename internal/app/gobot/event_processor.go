@@ -7,4 +7,5 @@ type EventProcessor interface {
 	RegisterMessageCallback(func(*slackevents.MessageEvent))
 	Message(*MessageSource, string)
 	GetUsername(userID string) string
+	IsTestMode() bool
 }

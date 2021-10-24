@@ -105,3 +105,7 @@ func (s *SocketEventProcessor) StartEventLoop() {
 
 	s.client.Run()
 }
+
+func (*SocketEventProcessor) IsTestMode() bool {
+	return false
+}

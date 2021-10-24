@@ -8,8 +8,9 @@ import (
 )
 
 type Remember struct {
-	hub *gobot.Hub
-	db  *gobot.Database
+	hub       *gobot.Hub
+	db        *gobot.Database
+	tableName string
 }
 
 type RememberRow struct {
@@ -19,9 +20,14 @@ type RememberRow struct {
 }
 
 func NewRemember(hub *gobot.Hub, db *gobot.Database) *Remember {
+	tableName := "remember"
+	if hub.IsTestMode() {
+		tableName = "remember_test"
+	}
 	ret := &Remember{
-		hub: hub,
-		db:  db,
+		hub:       hub,
+		db:        db,
+		tableName: tableName,
 	}
 	hub.RegisterBangHandler("remember", ret.handleRemember)
 	hub.RegisterBangHandler("whatis", ret.handleWhatis)
@@ -35,7 +41,7 @@ func (p *Remember) handleRemember(source *gobot.MessageSource, message string) {
 		p.hub.Message(source, err.Error())
 		return
 	}
-	if ok := p.db.Put("remember", &RememberRow{Key: key, Username: source.Username, Value: value}); ok {
+	if ok := p.db.Put(p.tableName, &RememberRow{Key: key, Username: source.Username, Value: value}); ok {
 		p.hub.Message(source, "Okay, "+key+" == "+value)
 		return
 	}
@@ -49,7 +55,7 @@ func (p *Remember) handleWhatis(source *gobot.MessageSource, message string) {
 		return
 	}
 	item := &RememberRow{}
-	if ok := p.db.Get("remember", item, message); ok { // TODO searching
+	if ok := p.db.Get(p.tableName, item, message); ok { // TODO searching
 		p.hub.Message(source, item.Username+" taught me that "+item.Key+" == "+item.Value)
 		return
 	}
@@ -63,8 +69,8 @@ func (p *Remember) handleForget(source *gobot.MessageSource, message string) {
 		return
 	}
 	item := &RememberRow{}
-	if ok := p.db.Get("remember", item, message); ok {
-		deleted := p.db.Delete("remember", item.Key)
+	if ok := p.db.Get(p.tableName, item, message); ok {
+		deleted := p.db.Delete(p.tableName, item.Key)
 		if deleted {
 			p.hub.Message(source, "Okay, forgot that "+item.Key+" == "+item.Value)
 			return

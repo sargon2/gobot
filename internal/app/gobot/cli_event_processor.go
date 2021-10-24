@@ -42,3 +42,7 @@ func (s *CliEventProcessor) StartProcessingEvents() error {
 	s.messageCallback(ev)
 	return nil
 }
+
+func (*CliEventProcessor) IsTestMode() bool {
+	return false
+}

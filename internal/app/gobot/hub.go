@@ -28,3 +28,7 @@ func (h *Hub) RegisterMessageCallback(cb func(*slackevents.MessageEvent)) {
 func (h *Hub) Message(source *MessageSource, m string) {
 	h.eventProcessor.Message(source, m)
 }
+
+func (h *Hub) IsTestMode() bool {
+	return h.eventProcessor.IsTestMode()
+}

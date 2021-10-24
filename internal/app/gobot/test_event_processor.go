@@ -42,3 +42,7 @@ func (s *TestEventProcessor) Message(source *MessageSource, m string) {
 func (s *TestEventProcessor) StartProcessingEvents() error {
 	return nil
 }
+
+func (*TestEventProcessor) IsTestMode() bool {
+	return true
+}

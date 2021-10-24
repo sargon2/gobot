@@ -92,3 +92,7 @@ func (s *LambdaEventProcessor) StartProcessingEvents() error {
 	lambda.Start(s.HandleEvent)
 	return nil
 }
+
+func (*LambdaEventProcessor) IsTestMode() bool {
+	return false
+}
