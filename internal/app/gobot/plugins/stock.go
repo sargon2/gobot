@@ -81,8 +81,15 @@ func FloatFormat(f float64) string {
 	}
 	result := []rune(humanize.FormatFloat("#,###.###", f))
 	// result := []rune(fmt.Sprintf("%.3f", f))
-	for i := len(result) - 1; result[i] == '0' || result[i] == '.'; i-- {
-		result[i] = ' '
+	done := false
+	for i := len(result) - 1; !done; i-- {
+		done = true
+		if result[i] == '.' {
+			result[i] = ' '
+		} else if result[i] == '0' {
+			result[i] = ' '
+			done = false
+		}
 	}
 	return string(result)
 }
