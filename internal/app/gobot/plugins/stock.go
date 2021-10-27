@@ -34,6 +34,9 @@ func (p *Stock) handleMessage(source *gobot.MessageSource, message string) {
 		{Number: 3, Align: text.AlignRight},
 		{Number: 4, Align: text.AlignRight},
 		{Number: 5, Align: text.AlignRight},
+		{Number: 6, Align: text.AlignRight},
+		{Number: 7, Align: text.AlignRight},
+		{Number: 8, Align: text.AlignRight},
 	})
 
 	stocks := StockSplit(message)
