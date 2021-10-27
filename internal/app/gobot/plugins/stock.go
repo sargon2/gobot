@@ -1,7 +1,6 @@
 package gobot
 
 import (
-	"fmt"
 	"regexp"
 
 	"github.com/dustin/go-humanize"
@@ -45,7 +44,6 @@ func (p *Stock) handleMessage(source *gobot.MessageSource, message string) {
 	totalMsg := ""
 	for _, stock := range stocks {
 		q, err := quote.Get(stock)
-		fmt.Printf("%+v\n", q)
 		if q != nil {
 			if q.PostMarketPrice != 0 {
 				tw.AppendRow(table.Row{
