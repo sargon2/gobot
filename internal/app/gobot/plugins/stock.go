@@ -1,6 +1,7 @@
 package gobot
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/dustin/go-humanize"
@@ -44,14 +45,28 @@ func (p *Stock) handleMessage(source *gobot.MessageSource, message string) {
 	totalMsg := ""
 	for _, stock := range stocks {
 		q, err := quote.Get(stock)
+		fmt.Printf("%+v\n", q)
 		if q != nil {
-			tw.AppendRow(table.Row{
-				q.ShortName,
-				q.Symbol,
-				FloatFormat(q.RegularMarketPrice),
-				FloatFormat(q.RegularMarketChange),
-				FloatFormat(q.RegularMarketChangePercent) + "%",
-			})
+			if q.PostMarketPrice != 0 {
+				tw.AppendRow(table.Row{
+					q.ShortName,
+					q.Symbol,
+					FloatFormat(q.RegularMarketPrice),
+					FloatFormat(q.RegularMarketChange),
+					FloatFormat(q.RegularMarketChangePercent) + "%",
+					"(" + FloatFormat(q.PostMarketPrice),
+					FloatFormat(q.PostMarketChange),
+					FloatFormat(q.PostMarketChangePercent) + "% post-market)",
+				})
+			} else {
+				tw.AppendRow(table.Row{
+					q.ShortName,
+					q.Symbol,
+					FloatFormat(q.RegularMarketPrice),
+					FloatFormat(q.RegularMarketChange),
+					FloatFormat(q.RegularMarketChangePercent) + "%",
+				})
+			}
 		} else {
 			if err == nil {
 				totalMsg += stock + " not found\n"
