@@ -82,7 +82,7 @@ func (p *Stock) handleMessage(source *gobot.MessageSource, message string) {
 
 func StockSplit(message string) []string {
 	ret := []string{}
-	r := regexp.MustCompile("[\\s,;/\\\\\"'`]+")
+	r := regexp.MustCompile("[\\s,;/\\\\\"'`$]+")
 	for _, item := range r.Split(message, -1) {
 		if len(item) > 0 {
 			ret = append(ret, item)

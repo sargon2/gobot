@@ -30,6 +30,10 @@ func TestStockSplit(t *testing.T) {
 	assertStockSplit(t, "\"aapl,btc-usd\"", []string{"aapl", "btc-usd"})
 	assertStockSplit(t, "'aapl'", []string{"aapl"})
 	assertStockSplit(t, "`aapl`", []string{"aapl"})
+	assertStockSplit(t, "$aapl", []string{"aapl"})
+	assertStockSplit(t, "$aapl$btc-usd", []string{"aapl", "btc-usd"})
+	assertStockSplit(t, "$aapl $btc-usd", []string{"aapl", "btc-usd"})
+	assertStockSplit(t, "$aapl,$btc-usd", []string{"aapl", "btc-usd"})
 }
 
 func assertFloatFormat(t *testing.T, f float64, expected string) {
