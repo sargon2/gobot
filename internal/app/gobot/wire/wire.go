@@ -1,4 +1,4 @@
-//+build wireinject
+//go:build wireinject
 
 package gobot
 
@@ -24,6 +24,7 @@ type Hooks struct {
 	Hooks    *plugins.Hooks
 	Stock    *plugins.Stock
 	Remember *plugins.Remember
+	Calc     *plugins.Calc
 }
 
 // This tells wire what type providers we have.  Ideally it would auto-detect them somehow but it doesn't support that today.
@@ -46,6 +47,7 @@ func WireHooks() (*Hooks, error) {
 		plugins.NewTime,
 		plugins.NewStock,
 		plugins.NewRemember,
+		plugins.NewCalc,
 	)
 	return &Hooks{}, nil // Will be magically replaced by wire.
 }

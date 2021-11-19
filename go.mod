@@ -3,6 +3,7 @@ module github.com/sargon2/gobot
 go 1.13
 
 require (
+	github.com/Krognol/go-wolfram v0.0.0-20180610151123-5b91101b92a8 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d
 	github.com/aws/aws-lambda-go v1.26.0
 	github.com/aws/aws-sdk-go v1.34.28
