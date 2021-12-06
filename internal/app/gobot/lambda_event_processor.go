@@ -48,8 +48,8 @@ func (s *LambdaEventProcessor) Message(source *MessageSource, m string) {
 
 func (s *LambdaEventProcessor) HandleEvent(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	fmt.Printf("Got request: %+v\n", request)
-	if _, ok := request.Headers["X-Slack-Retry-Num"]; ok {
-		fmt.Println("X-Slack-Retry-Num set, aborting")
+	if _, ok := request.Headers["x-slack-retry-num"]; ok {
+		fmt.Println("x-slack-retry-num set, aborting")
 		return events.APIGatewayProxyResponse{StatusCode: 200}, nil
 	}
 
