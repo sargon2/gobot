@@ -47,7 +47,13 @@ func (s *LambdaEventProcessor) Message(source *MessageSource, m string) {
 }
 
 func (s *LambdaEventProcessor) HandleEvent(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	fmt.Printf("Got request: %+v\n", request)
+	// fmt.Printf("Got request: %+v\n", request)
+
+	// Slack will retry if we don't respond in 3 seconds.
+	// But we do respond after that, so we don't want retries.
+	// So as a workaround we can ignore retried requests.
+	// TODO The real fix for this would be to return 200 immediately, and use step functions to execute the bot after that.
+	// https://stackoverflow.com/a/44670387
 	if _, ok := request.Headers["x-slack-retry-num"]; ok {
 		fmt.Println("x-slack-retry-num set, aborting")
 		return events.APIGatewayProxyResponse{StatusCode: 200}, nil
