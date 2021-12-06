@@ -39,6 +39,7 @@ func (s *LambdaEventProcessor) RegisterMessageCallback(cb func(*slackevents.Mess
 }
 
 func (s *LambdaEventProcessor) Message(source *MessageSource, m string) {
+	fmt.Println("Message", m)
 	_, _, err := s.api.PostMessage(source.ChannelID, slack.MsgOptionText(m, true))
 	if err != nil {
 		fmt.Println(err)

@@ -2,6 +2,7 @@ package gobot
 
 import (
 	"errors"
+	"fmt"
 	"os"
 
 	wolfram "github.com/Krognol/go-wolfram"
@@ -32,10 +33,13 @@ func NewCalc(hub *gobot.Hub) (*Calc, error) {
 }
 
 func (c *Calc) handleMessage(source *gobot.MessageSource, message string) {
+	fmt.Println("Starting calc handleMessage")
 	result, err := c.client.GetShortAnswerQuery(message, wolfram.Imperial, 30)
 	if err != nil {
+		fmt.Println("calc returning error: " + err.Error())
 		c.hub.Message(source, "Got an error: "+err.Error())
 		return
 	}
+	fmt.Println("calc returning result: " + result)
 	c.hub.Message(source, result)
 }
