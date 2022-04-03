@@ -11,7 +11,7 @@ all: gobot history_grabber
 gobot: .tested $(GO_FILES) internal/app/gobot/wire/wire_gen.go
 	go build -o gobot cmd/gobot/main.go
 
-history_grabber: $(GO_FILES)
+history_grabber: $(GO_FILES) internal/app/history_grabber/wire/wire_gen.go
 	go build -o history_grabber cmd/history_grabber/main.go
 
 .PHONY: test
@@ -19,12 +19,15 @@ test: .tested
 
 # In order to tell whether or not the code is tested or if the tests need to be re-run,
 # make needs a file timestamp.  So we create a file just to store the last tested timestamp.
-.tested: $(GO_FILES) internal/app/gobot/wire/wire_gen.go
+.tested: $(GO_FILES) internal/app/gobot/wire/wire_gen.go internal/app/history_grabber/wire/wire_gen.go
 	go test ./...
 	touch .tested
 
 internal/app/gobot/wire/wire_gen.go: internal/app/gobot/wire/wire.go
 	$(GOPATH)/bin/wire internal/app/gobot/wire/wire.go
+
+internal/app/history_grabber/wire/wire_gen.go: internal/app/history_grabber/wire/wire.go
+	$(GOPATH)/bin/wire internal/app/history_grabber/wire/wire.go
 
 gobot.zip: .tested gobot
 	zip gobot.zip gobot
@@ -32,6 +35,7 @@ gobot.zip: .tested gobot
 .PHONY: lambda
 lambda: .tested gobot.zip
 	aws lambda update-function-code --function-name gobot --zip-file fileb://gobot.zip
+	aws lambda wait function-updated --function-name gobot
 
 .PHONY: clean
 clean:
