@@ -3,17 +3,23 @@
 package gobot
 
 import (
+	"fmt"
+
 	"github.com/google/wire"
 	history_grabber "github.com/sargon2/gobot/internal/app/history_grabber"
 )
 
 func Begin() {
-	WireHistoryGrabber()
+	_, err := WireHistoryGrabber()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 }
 
-func WireHistoryGrabber() *history_grabber.HistoryGrabber {
+func WireHistoryGrabber() (*history_grabber.HistoryGrabber, error) {
 	wire.Build(
+		history_grabber.NewSlackClient,
 		history_grabber.NewHistoryGrabber,
 	)
-	return &history_grabber.HistoryGrabber{} // Will be magically replaced by wire.
+	return &history_grabber.HistoryGrabber{}, nil // Will be magically replaced by wire.
 }

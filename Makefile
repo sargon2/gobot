@@ -23,10 +23,10 @@ test: .tested
 	go test ./...
 	touch .tested
 
-internal/app/gobot/wire/wire_gen.go: internal/app/gobot/wire/wire.go
+internal/app/gobot/wire/wire_gen.go: $(GO_FILES) internal/app/gobot/wire/wire.go
 	$(GOPATH)/bin/wire internal/app/gobot/wire/wire.go
 
-internal/app/history_grabber/wire/wire_gen.go: internal/app/history_grabber/wire/wire.go
+internal/app/history_grabber/wire/wire_gen.go: $(GO_FILES) internal/app/history_grabber/wire/wire.go
 	$(GOPATH)/bin/wire internal/app/history_grabber/wire/wire.go
 
 gobot.zip: .tested gobot
