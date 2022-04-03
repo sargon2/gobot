@@ -1,4 +1,5 @@
 /gobot
 /gobot.zip
+/history_grabber
 internal/app/gobot/wire/wire_gen.go
 .tested

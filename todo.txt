@@ -1,1 +1,6 @@
-- Unit tests
+Logging
+ 1. Ability to call the history api & get history https://api.slack.com/methods/conversations.history
+ 1. Ability to calculate the desired retrieval time range
+ 1. After getting the history, upload it to S3
+ 1. Ability to be invoked by a lambda
+ 1. CloudWatch scheduled event set up to invoke it daily
