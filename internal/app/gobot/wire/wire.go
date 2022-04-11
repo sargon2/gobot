@@ -17,14 +17,15 @@ var testMode bool = false
 type Hooks struct {
 	EventProcessor gobot.EventProcessor
 
-	Ping     *plugins.Ping
-	Roll     *plugins.Roll
-	Sun      *plugins.Sun
-	Time     *plugins.Time
-	Hooks    *plugins.Hooks
-	Stock    *plugins.Stock
-	Remember *plugins.Remember
-	Calc     *plugins.Calc
+	Ping      *plugins.Ping
+	Roll      *plugins.Roll
+	Sun       *plugins.Sun
+	Time      *plugins.Time
+	Hooks     *plugins.Hooks
+	Stock     *plugins.Stock
+	Remember  *plugins.Remember
+	Calc      *plugins.Calc
+	Predictit *plugins.Predictit
 }
 
 // This tells wire what type providers we have.  Ideally it would auto-detect them somehow but it doesn't support that today.
@@ -48,6 +49,7 @@ func WireHooks() (*Hooks, error) {
 		plugins.NewStock,
 		plugins.NewRemember,
 		plugins.NewCalc,
+		plugins.NewPredictit,
 	)
 	return &Hooks{}, nil // Will be magically replaced by wire.
 }
