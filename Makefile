@@ -1,6 +1,6 @@
 export SHELL:=/bin/bash
 export SHELLOPTS:=$(if $(SHELLOPTS),$(SHELLOPTS):)pipefail:errexit
-GO_FILES = $(shell find . -type f -name '*.go')
+GO_FILES = $(shell find . -type f -name '*.go' | grep -v wire/wire_gen.go)
 
 # "make" will run the unit tests.
 # "make lambda" will upload gobot to AWS lambda.
