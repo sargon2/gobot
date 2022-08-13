@@ -7,8 +7,8 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func NewSlackClient(slackBotToken *SlackBotToken) (*slack.Client, error) {
-	tokenString := string(*slackBotToken)
+func NewSlackClient() (*slack.Client, error) {
+	tokenString := *GetSecret("slack_bot_token")
 	if !strings.HasPrefix(tokenString, "xoxb-") {
 		return nil, errors.New("SLACK_BOT_TOKEN must have the prefix \"xoxb-\".")
 	}

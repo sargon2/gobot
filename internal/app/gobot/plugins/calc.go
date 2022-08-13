@@ -12,10 +12,10 @@ type Calc struct {
 	client *wolfram.Client
 }
 
-func NewCalc(hub *gobot.Hub, wolframAlphaKey *gobot.WolframAlphaKey) (*Calc, error) {
+func NewCalc(hub *gobot.Hub) (*Calc, error) {
 	ret := &Calc{
 		hub:    hub,
-		client: &wolfram.Client{AppID: string(*wolframAlphaKey)},
+		client: &wolfram.Client{AppID: *gobot.GetSecret("wolfram_alpha_key")},
 	}
 
 	hub.RegisterBangHandler("calc", ret.handleMessage)

@@ -47,11 +47,6 @@ func WireHooks() (*Hooks, error) {
 		gobot.NewHub,
 		gobot.NewDatabase,
 
-		// Secrets
-		gobot.ProvideMapquestApiKey,
-		gobot.ProvideWolframAlphaKey,
-		gobot.ProvideSlackBotToken,
-
 		// Plugins
 		plugins.NewHooks,
 		plugins.NewPing,

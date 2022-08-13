@@ -19,7 +19,6 @@ func Begin() {
 
 func WireHistoryGrabber() (*history_grabber.HistoryGrabber, error) {
 	wire.Build(
-		gobot.ProvideSlackBotToken,
 		gobot.NewSlackClient,
 		history_grabber.NewHistoryGrabber,
 	)

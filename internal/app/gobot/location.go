@@ -19,8 +19,8 @@ type Location struct {
 
 type LocationFinder struct{}
 
-func NewLocationFinder(mapquestApiKey *MapquestApiKey) (*LocationFinder, error) {
-	geocoder.SetAPIKey(string(*mapquestApiKey))
+func NewLocationFinder() (*LocationFinder, error) {
+	geocoder.SetAPIKey(*GetSecret("mapquest_api_key"))
 
 	return &LocationFinder{}, nil
 }
