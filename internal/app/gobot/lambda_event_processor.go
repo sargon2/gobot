@@ -3,10 +3,7 @@ package gobot
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"os"
-	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -19,8 +16,8 @@ type LambdaEventProcessor struct {
 	messageCallback func(*slackevents.MessageEvent) // TODO this should be a list of callbacks
 }
 
-func NewLambdaEventProcessor() *LambdaEventProcessor {
-	return &LambdaEventProcessor{}
+func NewLambdaEventProcessor(slackClient *slack.Client) (*LambdaEventProcessor, error) {
+	return &LambdaEventProcessor{api: slackClient}, nil
 }
 
 func (s *LambdaEventProcessor) GetUsername(userID string) string {
@@ -93,13 +90,6 @@ func (s *LambdaEventProcessor) HandleEvent(ctx context.Context, request events.A
 }
 
 func (s *LambdaEventProcessor) StartProcessingEvents() error {
-	botToken := os.Getenv("SLACK_BOT_TOKEN")
-	if !strings.HasPrefix(botToken, "xoxb-") {
-		return errors.New("SLACK_BOT_TOKEN must have the prefix \"xoxb-\".")
-	}
-
-	s.api = slack.New(botToken)
-
 	lambda.Start(s.HandleEvent)
 	return nil
 }

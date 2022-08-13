@@ -2,7 +2,6 @@ package gobot
 
 import (
 	"errors"
-	"os"
 	"strings"
 	"time"
 
@@ -20,13 +19,8 @@ type Location struct {
 
 type LocationFinder struct{}
 
-func NewLocationFinder() (*LocationFinder, error) {
-	apiKey := os.Getenv("MAPQUEST_API_KEY")
-	if apiKey == "" {
-		return nil, errors.New("MAPQUEST_API_KEY must be set")
-	}
-
-	geocoder.SetAPIKey(apiKey)
+func NewLocationFinder(mapquestApiKey *MapquestApiKey) (*LocationFinder, error) {
+	geocoder.SetAPIKey(string(*mapquestApiKey))
 
 	return &LocationFinder{}, nil
 }

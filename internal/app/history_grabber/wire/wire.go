@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/google/wire"
+	"github.com/sargon2/gobot/internal/app/gobot"
 	history_grabber "github.com/sargon2/gobot/internal/app/history_grabber"
 )
 
@@ -18,7 +19,8 @@ func Begin() {
 
 func WireHistoryGrabber() (*history_grabber.HistoryGrabber, error) {
 	wire.Build(
-		history_grabber.NewSlackClient,
+		gobot.ProvideSlackBotToken,
+		gobot.NewSlackClient,
 		history_grabber.NewHistoryGrabber,
 	)
 	return &history_grabber.HistoryGrabber{}, nil // Will be magically replaced by wire.

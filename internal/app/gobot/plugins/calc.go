@@ -1,9 +1,7 @@
 package gobot
 
 import (
-	"errors"
 	"fmt"
-	"os"
 
 	wolfram "github.com/Krognol/go-wolfram"
 	"github.com/sargon2/gobot/internal/app/gobot"
@@ -14,15 +12,10 @@ type Calc struct {
 	client *wolfram.Client
 }
 
-func NewCalc(hub *gobot.Hub) (*Calc, error) {
-	apiKey := os.Getenv("WOLFRAM_ALPHA_KEY")
-	if apiKey == "" {
-		return nil, errors.New("WOLFRAM_ALPHA_KEY must be set")
-	}
-
+func NewCalc(hub *gobot.Hub, wolframAlphaKey *gobot.WolframAlphaKey) (*Calc, error) {
 	ret := &Calc{
 		hub:    hub,
-		client: &wolfram.Client{AppID: apiKey},
+		client: &wolfram.Client{AppID: string(*wolframAlphaKey)},
 	}
 
 	hub.RegisterBangHandler("calc", ret.handleMessage)

@@ -31,16 +31,28 @@ type Hooks struct {
 // This tells wire what type providers we have.  Ideally it would auto-detect them somehow but it doesn't support that today.
 func WireHooks() (*Hooks, error) {
 	wire.Build(
+		// Event processors
 		gobot.NewTestEventProcessor,
 		gobot.NewLambdaEventProcessor,
 		gobot.NewCliEventProcessor,
 		NewEventProcessor,
+
+		// Hooks
 		wire.Struct(new(Hooks), "*"),
+
+		// Supporting types
+		gobot.NewSlackClient,
 		gobot.NewLocationFinder,
 		gobot.NewBangManager,
 		gobot.NewHub,
 		gobot.NewDatabase,
 
+		// Secrets
+		gobot.ProvideMapquestApiKey,
+		gobot.ProvideWolframAlphaKey,
+		gobot.ProvideSlackBotToken,
+
+		// Plugins
 		plugins.NewHooks,
 		plugins.NewPing,
 		plugins.NewRoll,
