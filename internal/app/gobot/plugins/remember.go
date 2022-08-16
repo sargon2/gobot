@@ -69,6 +69,7 @@ func (p *Remember) handleWhatis(source *gobot.MessageSource, message string) {
 	if err != nil {
 		fmt.Printf("Error in HandleWhatis GetAllContains: %v\n", err)
 		p.hub.Message(source, "Oops, got an error")
+		return
 	}
 
 	shortestFinder := NewShortestRowFinder()
