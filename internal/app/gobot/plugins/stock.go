@@ -12,18 +12,32 @@ import (
 )
 
 type Stock struct {
-	hub *gobot.Hub
+	hub      *gobot.Hub
+	remember *Remember
 }
 
-func NewStock(hub *gobot.Hub) *Stock {
+func NewStock(hub *gobot.Hub, remember *Remember) *Stock {
 	ret := &Stock{
-		hub: hub,
+		hub:      hub,
+		remember: remember,
 	}
-	hub.RegisterBangHandler("stock", ret.handleMessage)
+	hub.RegisterBangHandler("stock", ret.handleStock)
+	hub.RegisterBangHandler("stocks", ret.handleStocks)
 	return ret
 }
 
-func (p *Stock) handleMessage(source *gobot.MessageSource, message string) {
+func (p *Stock) handleStocks(source *gobot.MessageSource, message string) {
+	whatisResult, err := p.remember.Whatis("stocks")
+	if err != nil {
+		p.hub.Message(source, "Error: "+err.Error())
+		return
+	}
+	msg := whatisResult.Value + " "
+	msg += message
+	p.handleStock(source, msg)
+}
+
+func (p *Stock) handleStock(source *gobot.MessageSource, message string) {
 	tw := table.NewWriter()
 	tw.Style().Options.DrawBorder = false
 	tw.Style().Options.SeparateRows = false

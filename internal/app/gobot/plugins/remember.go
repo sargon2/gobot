@@ -59,12 +59,14 @@ func (p *Remember) handleRemember(source *gobot.MessageSource, message string) {
 }
 
 type WhatisResult struct {
-	Answer string
-	Also   []string
+	User  string
+	Key   string
+	Value string
+	Also  []string
 }
 
 func (w *WhatisResult) String() string {
-	ret := w.Answer
+	ret := w.User + " taught me that " + w.Key + " == " + w.Value
 	if len(w.Also) > 0 {
 		ret += "\n(also " + strings.Join(w.Also, ", ") + ")"
 	}
@@ -98,18 +100,25 @@ func (p *Remember) Whatis(query string) (*WhatisResult, error) {
 		return nil, errors.New(query + " not found")
 	}
 
-	result := ""
+	key := ""
+	value := ""
+	user := ""
 	extraItems := make([]string, 0)
 	for i, item := range shortest {
 		if i == 0 {
-			result = item.Username + " taught me that " + item.Key + " == " + item.Value
+			// result = item.Username + " taught me that " + item.Key + " == " + item.Value
+			key = item.Key
+			value = item.Value
+			user = item.Username
 		} else {
 			extraItems = append(extraItems, item.Key)
 		}
 	}
 	return &WhatisResult{
-		Answer: result,
-		Also:   extraItems,
+		User:  user,
+		Key:   key,
+		Value: value,
+		Also:  extraItems,
 	}, nil
 }
 
