@@ -58,18 +58,28 @@ func (p *Remember) handleRemember(source *gobot.MessageSource, message string) {
 	p.hub.Message(source, "Oops, failed to remember")
 }
 
-func (p *Remember) handleWhatis(source *gobot.MessageSource, message string) {
-	message = RemoveHook(message)
-	if message == "" {
-		p.hub.Message(source, "Usage: !whatis <key>")
-		return
+type WhatisResult struct {
+	Answer string
+	Also   []string
+}
+
+func (w *WhatisResult) String() string {
+	ret := w.Answer
+	if len(w.Also) > 0 {
+		ret += "\n(also " + strings.Join(w.Also, ", ") + ")"
+	}
+	return ret
+}
+
+func (p *Remember) Whatis(query string) (*WhatisResult, error) {
+	if query == "" {
+		return nil, errors.New("Usage: !whatis <key>")
 	}
 
-	items, err := p.db.GetAllContains(p.tableName, "Key", message)
+	items, err := p.db.GetAllContains(p.tableName, "Key", query)
 	if err != nil {
 		fmt.Printf("Error in HandleWhatis GetAllContains: %v\n", err)
-		p.hub.Message(source, "Oops, got an error")
-		return
+		return nil, errors.New("Oops, got an error")
 	}
 
 	shortestFinder := NewShortestRowFinder()
@@ -78,16 +88,14 @@ func (p *Remember) handleWhatis(source *gobot.MessageSource, message string) {
 		err = dynamodbattribute.UnmarshalMap(dbitem, &item)
 		if err != nil {
 			fmt.Printf("Error in HandleWhatis UnmarshalMap: %v\n", err)
-			p.hub.Message(source, "Oops, got an error")
-			return
+			return nil, errors.New("Oops, got an error")
 		}
 		shortestFinder.AddItem(&item)
 	}
 
 	shortest := shortestFinder.Result()
 	if len(shortest) == 0 {
-		p.hub.Message(source, message+" not found")
-		return
+		return nil, errors.New(query + " not found")
 	}
 
 	result := ""
@@ -99,10 +107,22 @@ func (p *Remember) handleWhatis(source *gobot.MessageSource, message string) {
 			extraItems = append(extraItems, item.Key)
 		}
 	}
-	if len(extraItems) > 0 {
-		result += "\n(also " + strings.Join(extraItems, ", ") + ")"
+	return &WhatisResult{
+		Answer: result,
+		Also:   extraItems,
+	}, nil
+}
+
+func (p *Remember) handleWhatis(source *gobot.MessageSource, message string) {
+	message = RemoveHook(message)
+
+	result, err := p.Whatis(message)
+	if err != nil {
+		p.hub.Message(source, err.Error())
+		return
 	}
-	p.hub.Message(source, result)
+
+	p.hub.Message(source, result.String())
 }
 
 func (p *Remember) handleForget(source *gobot.MessageSource, message string) {
