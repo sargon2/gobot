@@ -32,9 +32,7 @@ func (p *Stock) handleStocks(source *gobot.MessageSource, message string) {
 		p.hub.Message(source, "Error: "+err.Error())
 		return
 	}
-	msg := whatisResult.Value + " "
-	msg += message
-	p.handleStock(source, msg)
+	p.handleStock(source, whatisResult.Value+" "+message)
 }
 
 func (p *Stock) handleStock(source *gobot.MessageSource, message string) {
