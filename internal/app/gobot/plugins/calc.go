@@ -33,6 +33,7 @@ func (c *Calc) handleMessage(source *gobot.MessageSource, message string) {
 		c.hub.Message(source, "Got an error: "+err.Error())
 		return
 	}
+	result = "Wolfram Alpha says: " + result
 	fmt.Println("calc returning result: " + result)
 	c.hub.Message(source, result)
 }
