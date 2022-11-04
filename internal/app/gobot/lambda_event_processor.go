@@ -77,7 +77,7 @@ func (s *LambdaEventProcessor) HandleEvent(ctx context.Context, request events.A
 		innerEvent := eventsAPIEvent.InnerEvent
 		switch ev := innerEvent.Data.(type) {
 		case *slackevents.MessageEvent:
-			// fmt.Printf("Message received: %+v", ev)
+			fmt.Printf("Message received: %+v", ev)
 			s.messageCallback(ev)
 		default:
 			fmt.Printf("Unsupported inner event type %T\n", innerEvent.Data)
