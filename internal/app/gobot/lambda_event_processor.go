@@ -44,7 +44,7 @@ func (s *LambdaEventProcessor) Message(source *MessageSource, m string) {
 }
 
 func (s *LambdaEventProcessor) HandleEvent(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	// fmt.Printf("Got request: %+v\n", request)
+	fmt.Printf("Got request: %+v\n", request)
 
 	// Slack will retry if we don't respond in 3 seconds.
 	// But we do respond after that, so we don't want retries.
