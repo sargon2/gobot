@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/sargon2/gobot/internal/app/gobot"
 )
@@ -25,6 +26,7 @@ func NewRoll(hub *gobot.Hub) *Roll {
 		hub: hub,
 	}
 	hub.RegisterBangHandler("roll", ret.handleMessage)
+	rand.Seed(time.Now().UnixNano())
 	return ret
 }
 
