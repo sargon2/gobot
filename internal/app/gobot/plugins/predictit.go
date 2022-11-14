@@ -20,7 +20,7 @@ type PredictitResponse struct {
 
 type PredictitResponseContract struct {
 	Name           string  `json:name`
-	LastClosePrice float64 `json:lastClosePrice`
+	LastTradePrice float64 `json:lastTradePrice`
 }
 
 func NewPredictit(hub *gobot.Hub) *Predictit {
@@ -47,7 +47,7 @@ func (p *Predictit) handleMessage(source *gobot.MessageSource, message string) {
 	ret := "```"
 	ret += response.Name + "\n"
 	for _, contract := range response.Contracts {
-		ret += fmt.Sprintf("%s %v\n", contract.Name, contract.LastClosePrice)
+		ret += fmt.Sprintf("%s %v\n", contract.Name, contract.LastTradePrice)
 	}
 	ret += "```"
 	p.hub.Message(source, ret)
