@@ -2,11 +2,11 @@ package gobot
 
 import (
 	"errors"
-	"strings"
 	"time"
 
-	"github.com/asaskevich/govalidator"
-	"github.com/jasonwinn/geocoder"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/locationservice"
 	"github.com/zsefvlol/timezonemapper"
 )
 
@@ -17,50 +17,47 @@ type Location struct {
 	TimeLocation *time.Location
 }
 
-type LocationFinder struct{}
-
-func NewLocationFinder() (*LocationFinder, error) {
-	geocoder.SetAPIKey(*GetSecret("mapquest_api_key"))
-
-	return &LocationFinder{}, nil
+type LocationFinder struct {
+	locationService *locationservice.LocationService
 }
 
-func (*LocationFinder) FindLocation(input string) (*Location, error) {
+func NewLocationFinder() *LocationFinder {
+	locationService := locationservice.New(session.Must(session.NewSession()), aws.NewConfig().WithRegion("us-east-1"))
+	return &LocationFinder{locationService: locationService}
+}
+
+func (l *LocationFinder) FindLocation(input string) (*Location, error) {
 	if input == "" {
 		return nil, errors.New("Need a location")
 	}
 
-	result, err := geocoder.FullGeocode(input)
+	maxResults := int64(1) // can't inline these because go sucks
+	indexName := "GobotPlaceIndex"
+	// Somewhere in the middle of the US
+	biasPositionLat := float64(37.0902)
+	biasPositionLong := float64(-95.7129)
+
+	biasPosition := []*float64{&biasPositionLong, &biasPositionLat}
+	asdf := &locationservice.SearchPlaceIndexForTextInput{
+		IndexName:    &indexName,
+		Text:         &input,
+		BiasPosition: biasPosition,
+		MaxResults:   &maxResults,
+	}
+	output, err := l.locationService.SearchPlaceIndexForText(asdf)
 	if err != nil {
 		return nil, err
 	}
-	if result == nil || len(result.Results) == 0 {
-		return nil, errors.New("No location results")
-	}
-	locations := result.Results[0].Locations
-	// Choose a location.
-	// This should be in a function, but can't be because of geocoder's strange nested struct declarations.
-	locationToUse := locations[0]
-	if len(input) == 5 && govalidator.IsInt(input) { // If the user gave a zip code, limit it to the US
-		for _, location := range locations {
-			if location.AdminArea1 == "US" {
-				locationToUse = location
-			}
-		}
-	}
-	var parts []string
-	for _, s := range []string{locationToUse.AdminArea6, locationToUse.AdminArea5, locationToUse.AdminArea4, locationToUse.AdminArea3, locationToUse.AdminArea1} {
-		if s != "" {
-			parts = append(parts, s)
-		}
-	}
 
-	timeLocation, _ := time.LoadLocation(timezonemapper.LatLngToTimezoneString(locationToUse.LatLng.Lat, locationToUse.LatLng.Lng))
+	lat := output.Results[0].Place.Geometry.Point[1]
+	lng := output.Results[0].Place.Geometry.Point[0]
+
+	timeLocation, _ := time.LoadLocation(timezonemapper.LatLngToTimezoneString(*lat, *lng))
 
 	return &Location{
-		Latitude:     locationToUse.LatLng.Lat,
-		Longitude:    locationToUse.LatLng.Lng,
-		Description:  strings.Join(parts, ", "),
+		Latitude:     *lat,
+		Longitude:    *lng,
+		Description:  *output.Results[0].Place.Label,
 		TimeLocation: timeLocation,
 	}, nil
 }
