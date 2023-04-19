@@ -37,8 +37,8 @@ func (t *Sun) handleMessage(source *gobot.MessageSource, message string) {
 	t.hub.Message(source, fmt.Sprint(
 		location.Description,
 		": ",
-		timeResult[suncalc.Dawn].Time.In(location.TimeLocation).Round(time.Minute).Format("3:04pm"),
+		timeResult[suncalc.Dawn].Value.In(location.TimeLocation).Round(time.Minute).Format("3:04pm"),
 		" - ",
-		timeResult[suncalc.Dusk].Time.In(location.TimeLocation).Round(time.Minute).Format("3:04pm MST"),
+		timeResult[suncalc.Dusk].Value.In(location.TimeLocation).Round(time.Minute).Format("3:04pm MST"),
 	))
 }
