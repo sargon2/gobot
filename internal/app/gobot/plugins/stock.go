@@ -27,13 +27,12 @@ func NewStock(hub *gobot.Hub, remember *Remember) *Stock {
 }
 
 func (p *Stock) handleStocks(source *gobot.MessageSource, message string) {
-	p.hub.Message(source, "bork bork bork")
-	// whatisResult, err := p.remember.Whatis("stocks")
-	// if err != nil {
-	// 	p.hub.Message(source, "Error: "+err.Error())
-	// 	return
-	// }
-	// p.handleStock(source, whatisResult.Value+" "+message)
+	whatisResult, err := p.remember.Whatis("stocks")
+	if err != nil {
+		p.hub.Message(source, "Error: "+err.Error())
+		return
+	}
+	p.handleStock(source, whatisResult.Value+" "+message)
 }
 
 func (p *Stock) handleStock(source *gobot.MessageSource, message string) {
