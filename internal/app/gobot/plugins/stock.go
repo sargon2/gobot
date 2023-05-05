@@ -85,6 +85,7 @@ func (p *Stock) handleStock(source *gobot.MessageSource, message string) {
 				totalMsg += stock + " not found\n"
 			} else {
 				totalMsg += "Error getting " + stock + ", err was " + string(err.Error()) + "\n"
+				break
 			}
 		}
 	}
