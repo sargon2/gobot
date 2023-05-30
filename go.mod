@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/Krognol/go-wolfram v0.0.0-20180610151123-5b91101b92a8
 	github.com/aws/aws-lambda-go v1.41.0
-	github.com/aws/aws-sdk-go v1.44.259
+	github.com/aws/aws-sdk-go v1.44.271
 	github.com/djdv/go-swatch v0.1.1
 	github.com/dustin/go-humanize v1.0.1
 	github.com/google/wire v0.5.0
@@ -31,6 +31,9 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect
 	go.mongodb.org/mongo-driver v1.11.6 // indirect
+	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/piquette/finance-go => github.com/psanford/finance-go v0.0.0-20230526052639-38afc6224a5c
