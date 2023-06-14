@@ -39,6 +39,7 @@ func TestParseRoll(t *testing.T) {
 	assertParseOneResult(t, "1d2 1=d3 2=d4", 1, 2)
 	assertParseOneResult(t, "1d2 1 = yes, 2 = no", 1, 2)
 	assertParseOneResult(t, "1d2  1  =  yes,  2  =  no", 1, 2)
+	assertParseOneResult(t, "1d100; spezbrain", 1, 100)
 	assertParseError(t, "1d2=1")
 	assertParseError(t, "1d2=a")
 	assertParseOneResult(t, "12d8", 12, 8)

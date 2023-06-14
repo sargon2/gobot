@@ -69,6 +69,7 @@ func ParseRoll(input string) ([]OneRoll, error) {
 	input = strings.ToLower((input))
 	input = strings.ReplaceAll(input, "d ", "d")
 	input = strings.ReplaceAll(input, "+", " ")
+	input = strings.ReplaceAll(input, ";", " ")
 	input = strings.ReplaceAll(input, " = ", "=")
 	input = strings.TrimSpace(input)
 	input = re.ReplaceAllString(input, " ")
