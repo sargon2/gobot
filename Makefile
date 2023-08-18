@@ -1,5 +1,6 @@
 export SHELL:=/bin/bash
 export SHELLOPTS:=$(if $(SHELLOPTS),$(SHELLOPTS):)pipefail:errexit
+export CGO_ENABLED=0
 GO_FILES = $(shell find . -type f -name '*.go' | grep -v wire/wire_gen.go)
 
 # "make" will run the unit tests.
