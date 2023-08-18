@@ -120,7 +120,7 @@ func ParseRoll(input string) ([]OneRoll, error) {
 func expand(in []OneRoll) []OneRoll {
 	out := make([]OneRoll, 0)
 	for _, roll := range in {
-		if roll.DiceSize > 1 && roll.NumDice <= 10 {
+		if roll.DiceSize > 1 && roll.NumDice <= 500 {
 			for i := 0; i < roll.NumDice; i++ {
 				out = append(out, OneRoll{NumDice: 1, DiceSize: roll.DiceSize})
 			}
