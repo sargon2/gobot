@@ -7,10 +7,13 @@ GO_FILES = $(shell find . -type f -name '*.go' | grep -v wire/wire_gen.go)
 # "make lambda" will upload gobot to AWS lambda.
 
 .PHONY: all
-all: gobot history_grabber
+all: cli_gobot lambda_gobot history_grabber
 
-gobot: .tested $(GO_FILES) internal/app/gobot/wire/wire_gen.go
+cli_gobot: .tested $(GO_FILES) internal/app/gobot/wire/wire_gen.go
 	go build -o gobot cmd/gobot/main.go
+
+lambda_gobot: .tested $(GO_FILES) internal/app/gobot/wire/wire_gen.go
+	GOARCH=amd64 GOOS=linux go build -tags lambda.norpc -o bootstrap cmd/gobot/main.go
 
 history_grabber: $(GO_FILES) internal/app/history_grabber/wire/wire_gen.go
 	go build -o history_grabber cmd/history_grabber/main.go
@@ -30,8 +33,8 @@ internal/app/gobot/wire/wire_gen.go: $(GO_FILES) internal/app/gobot/wire/wire.go
 internal/app/history_grabber/wire/wire_gen.go: $(GO_FILES) internal/app/history_grabber/wire/wire.go
 	$(GOPATH)/bin/wire internal/app/history_grabber/wire/wire.go
 
-gobot.zip: .tested gobot
-	zip gobot.zip gobot
+gobot.zip: .tested lambda_gobot
+	zip gobot.zip bootstrap
 
 .PHONY: lambda
 lambda: .tested gobot.zip
