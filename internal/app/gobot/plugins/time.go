@@ -3,9 +3,8 @@ package gobot
 import (
 	"fmt"
 
+	"github.com/djdv/go-swatch"
 	"github.com/sargon2/gobot/internal/app/gobot"
-
-	swatch "github.com/djdv/go-swatch"
 )
 
 type Time struct {
@@ -21,5 +20,5 @@ func NewTime(hub *gobot.Hub) *Time {
 }
 
 func (t *Time) handleMessage(source *gobot.MessageSource, message string) {
-	t.hub.Message(source, fmt.Sprintf("Swatch Internet Time: %s", swatch.Now(swatch.Centi)))
+	t.hub.Message(source, fmt.Sprintf("Swatch Internet Time: @%f", swatch.New().PreciseBeats()))
 }
