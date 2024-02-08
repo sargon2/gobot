@@ -38,8 +38,8 @@ gobot.zip: .tested lambda_gobot
 
 .PHONY: lambda
 lambda: .tested gobot.zip
-	AWS_PAGER="" aws lambda update-function-code --function-name gobot --zip-file fileb://gobot.zip
-	AWS_PAGER="" aws lambda wait function-updated --function-name gobot
+	AWS_PAGER="" aws lambda update-function-code --function-name gobot --zip-file fileb://gobot.zip --profile gobot
+	AWS_PAGER="" aws lambda wait function-updated --function-name gobot --profile gobot
 
 .PHONY: clean
 clean:
