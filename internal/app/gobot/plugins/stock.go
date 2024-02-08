@@ -2,6 +2,7 @@ package gobot
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/dustin/go-humanize"
 	"github.com/jedib0t/go-pretty/table"
@@ -90,6 +91,7 @@ func (p *Stock) handleStock(source *gobot.MessageSource, message string) {
 		}
 	}
 	totalMsg = "```\n" + tw.Render() + "\n" + totalMsg + "```\n"
+	totalMsg = trimSpacesFromLines(totalMsg)
 	p.hub.Message(source, totalMsg)
 }
 
@@ -102,6 +104,14 @@ func StockSplit(message string) []string {
 		}
 	}
 	return ret
+}
+
+func trimSpacesFromLines(str string) string {
+	lines := strings.Split(str, "\n") // Split the input string into lines
+	for i, line := range lines {
+		lines[i] = strings.TrimSpace(line) // Trim spaces from each line
+	}
+	return strings.Join(lines, "\n") // Rejoin the lines into a single string
 }
 
 func FloatFormat(f float64) string {
