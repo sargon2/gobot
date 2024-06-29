@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
+	"github.com/gocolly/colly/v2"
 	"github.com/sargon2/gobot/internal/app/gobot"
 )
 
@@ -49,7 +51,14 @@ func (p *Predictit) handleMessage(source *gobot.MessageSource, message string) {
 	for _, contract := range response.Contracts {
 		ret += fmt.Sprintf("%s %v\n", contract.Name, contract.LastTradePrice)
 	}
+	fivethirtyeight, err := getFiveThirtyEight()
+	if err != nil {
+		p.hub.Message(source, "Error getting 538: "+err.Error())
+	} else {
+		ret += "\n538 says: " + fivethirtyeight
+	}
 	ret += "```"
+
 	p.hub.Message(source, ret)
 }
 
@@ -71,4 +80,29 @@ func getURLContents(url string) ([]byte, error) {
 	}
 
 	return data, nil
+}
+
+func getFiveThirtyEight() (string, error) {
+	// https://projects.fivethirtyeight.com/2024-election-forecast/
+	// https://github.com/gocolly/colly
+	// https://stackoverflow.com/questions/65971880/scrape-only-a-certain-div-using-gocolly
+
+	cly := colly.NewCollector(
+		colly.AllowedDomains("projects.fivethirtyeight.com"),
+	)
+	// cly.OnHTML("body", func(e *colly.HTMLElement) {
+	// 	link := e.Attr("div")
+	// 	fmt.Printf("Link found: %q -> %s\n", e.Text, link)
+	// 	// cly.Visit(e.Request.AbsoluteURL(link))
+	// })
+	content := ""
+	cly.OnHTML("div.odds-text-large.mb-10", func(e *colly.HTMLElement) {
+		content = strings.Join(e.ChildTexts("div"), " ")
+	})
+	cly.Visit("https://projects.fivethirtyeight.com/2024-election-forecast/")
+
+	if content != "" {
+		return content, nil
+	}
+	return "", fmt.Errorf("Div not found")
 }
