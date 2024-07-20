@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sort"
 	"strings"
 
 	"github.com/gocolly/colly/v2"
@@ -57,7 +58,9 @@ func (p *Predictit) handleMessage(source *gobot.MessageSource, message string) {
 	// Predictit
 	ret += "Predictit: " + response.Name + "\n"
 	for _, contract := range response.Contracts {
-		ret += fmt.Sprintf("%s %v\n", contract.Name, contract.LastTradePrice)
+		if contract.LastTradePrice > .055 {
+			ret += fmt.Sprintf("%s %v\n", contract.Name, contract.LastTradePrice)
+		}
 	}
 
 	// 538
@@ -126,14 +129,36 @@ func getPolymarket() string {
 	}
 
 	result := gjson.Get(string(contents), "#.markets.#.{groupItemTitle,outcomePrices}")
+
+	type marketData struct {
+		title string
+		price float64
+	}
+
+	var markets []marketData
+
 	for _, outer_item := range result.Array() {
 		for _, item := range outer_item.Array() {
 			m := item.Map()
-			ret += m["groupItemTitle"].String()
-			ret += " "
-			ret += gjson.Get(m["outcomePrices"].String(), "#()").String()
-			ret += "\n"
+			title := m["groupItemTitle"].String()
+			price := gjson.Get(m["outcomePrices"].String(), "0").Float()
+			if price > .055 {
+				markets = append(markets, marketData{title: title, price: price})
+			}
 		}
 	}
+
+	// Sort markets by price
+	sort.Slice(markets, func(i, j int) bool {
+		return markets[i].price > markets[j].price
+	})
+
+	for _, market := range markets {
+		ret += market.title
+		ret += " "
+		ret += fmt.Sprintf("%.2f", market.price)
+		ret += "\n"
+	}
+
 	return ret
 }
