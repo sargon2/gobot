@@ -9,6 +9,7 @@ import (
 
 	"github.com/gocolly/colly/v2"
 	"github.com/sargon2/gobot/internal/app/gobot"
+	"github.com/tidwall/gjson"
 )
 
 type Predictit struct {
@@ -47,15 +48,24 @@ func (p *Predictit) handleMessage(source *gobot.MessageSource, message string) {
 	}
 
 	ret := "```"
-	ret += response.Name + "\n"
+	// Polymarket
+	ret += "Polymarket: presidential-election-winner-2024\n"
+	ret += getPolymarket()
+
+	ret += "\n"
+
+	// Predictit
+	ret += "Predictit: " + response.Name + "\n"
 	for _, contract := range response.Contracts {
 		ret += fmt.Sprintf("%s %v\n", contract.Name, contract.LastTradePrice)
 	}
+
+	// 538
 	fivethirtyeight, err := getFiveThirtyEight()
 	if err != nil {
 		p.hub.Message(source, "Error getting 538: "+err.Error())
 	} else {
-		ret += "\n538 says: " + fivethirtyeight
+		ret += "\n538: " + fivethirtyeight
 	}
 	ret += "```"
 
@@ -105,4 +115,25 @@ func getFiveThirtyEight() (string, error) {
 		return content, nil
 	}
 	return "", fmt.Errorf("Div not found")
+}
+
+func getPolymarket() string {
+	ret := ""
+	url := "https://gamma-api.polymarket.com/events?slug=presidential-election-winner-2024"
+	contents, err := getURLContents(url)
+	if err != nil {
+		return "Error getting polymarket: " + err.Error()
+	}
+
+	result := gjson.Get(string(contents), "#.markets.#.{groupItemTitle,outcomePrices}")
+	for _, outer_item := range result.Array() {
+		for _, item := range outer_item.Array() {
+			m := item.Map()
+			ret += m["groupItemTitle"].String()
+			ret += " "
+			ret += gjson.Get(m["outcomePrices"].String(), "#()").String()
+			ret += "\n"
+		}
+	}
+	return ret
 }
