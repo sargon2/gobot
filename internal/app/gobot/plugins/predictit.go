@@ -109,11 +109,18 @@ func getFiveThirtyEight() (string, error) {
 	// 	// cly.Visit(e.Request.AbsoluteURL(link))
 	// })
 	content := ""
+	suspended := ""
+	cly.OnHTML("div#forecast-suspended-box", func(e *colly.HTMLElement) {
+		suspended = e.Text
+	})
 	cly.OnHTML("div.odds-text-large.mb-10", func(e *colly.HTMLElement) {
 		content = strings.Join(e.ChildTexts("div"), " ")
 	})
 	cly.Visit("https://projects.fivethirtyeight.com/2024-election-forecast/")
 
+	if suspended != "" {
+		return suspended, nil
+	}
 	if content != "" {
 		return content, nil
 	}
