@@ -58,7 +58,7 @@ func (p *Predictit) handleMessage(source *gobot.MessageSource, message string) {
 	// Predictit
 	ret += "Predictit: " + response.Name + "\n"
 	for _, contract := range response.Contracts {
-		if contract.LastTradePrice > .055 {
+		if contract.LastTradePrice > .035 {
 			ret += fmt.Sprintf("%s %v\n", contract.Name, contract.LastTradePrice)
 		}
 	}
@@ -149,7 +149,7 @@ func getPolymarket() string {
 			m := item.Map()
 			title := m["groupItemTitle"].String()
 			price := gjson.Get(m["outcomePrices"].String(), "0").Float()
-			if price > .055 {
+			if price > .035 {
 				markets = append(markets, marketData{title: title, price: price})
 			}
 		}
