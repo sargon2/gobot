@@ -1,11 +1,13 @@
 package gobot
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/gocolly/colly/v2"
@@ -66,10 +68,15 @@ func (p *Predictit) handleMessage(source *gobot.MessageSource, message string) {
 	// 538
 	fivethirtyeight, err := getFiveThirtyEight()
 	if err != nil {
-		p.hub.Message(source, "Error getting 538: "+err.Error())
+		ret += "Error getting 538: " + err.Error()
 	} else {
 		ret += "\n538: " + fivethirtyeight
 	}
+
+	ret += "\n\n"
+
+	// Nate silver
+	ret += "Nate Silver polls: " + getNateSilver()
 	ret += "```"
 
 	p.hub.Message(source, ret)
@@ -168,4 +175,64 @@ func getPolymarket() string {
 	}
 
 	return ret
+}
+
+func getNateSilver() string {
+	// https://www.natesilver.net/p/nate-silver-2024-president-election-polls-model
+	// https://datawrapper.dwcdn.net/wB0Zh/16/
+	// https://static.dwcdn.net/data/wB0Zh.csv
+
+	ret := ""
+
+	contents, err := getURLContents("https://static.dwcdn.net/data/wB0Zh.csv")
+	if err != nil {
+		return "Error getting Nate Silver" + err.Error()
+	}
+
+	// Read CSV data
+	reader := csv.NewReader(strings.NewReader(string(contents)))
+	records, err := reader.ReadAll()
+	if err != nil {
+		return "Error getting Nate Silver" + err.Error()
+	}
+
+	// Get the header row and the last data row
+	headers := records[0]
+	latestRow := records[len(records)-1]
+
+	type resultData struct {
+		name string
+		val  float64
+	}
+
+	var results []resultData
+
+	// Create a map to store the latest poll results
+	for i, header := range headers {
+		if header == "state" {
+			// state is always "National"
+			continue
+		}
+		if header == "modeldate" {
+			ret += "as of " + latestRow[i]
+		} else if !strings.HasSuffix(header, "_poll") {
+			valf, err := strconv.ParseFloat(latestRow[i], 64)
+			if err != nil {
+				return "Error parsing Nate Silver csv" + err.Error()
+			}
+			results = append(results, resultData{name: header, val: valf})
+		}
+	}
+
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].val > results[j].val
+	})
+
+	for _, candidate := range results {
+		ret += "\n"
+		ret += fmt.Sprintf("%s: %.2f", candidate.name, candidate.val)
+	}
+
+	return ret
+
 }
