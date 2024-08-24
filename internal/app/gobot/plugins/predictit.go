@@ -52,13 +52,13 @@ func (p *Predictit) handleMessage(source *gobot.MessageSource, message string) {
 
 	ret := "```"
 	// Polymarket
-	ret += "Polymarket: presidential-election-winner-2024\n"
+	ret += "Polymarket: presidential-election-winner-2024 (> .035)\n"
 	ret += getPolymarket()
 
 	ret += "\n"
 
 	// Predictit
-	ret += "Predictit: " + response.Name + "\n"
+	ret += "Predictit: " + response.Name + " (> .035)\n"
 	for _, contract := range response.Contracts {
 		if contract.LastTradePrice > .035 {
 			ret += fmt.Sprintf("%s %v\n", contract.Name, contract.LastTradePrice)
