@@ -217,7 +217,7 @@ func getNateSilver() string {
 			ret += "as of " + latestRow[i]
 		} else if !strings.HasSuffix(header, "_poll") {
 			if latestRow[i] == "" {
-				return "Nate Silver's CSV is missing the actual values"
+				continue
 			}
 			valf, err := strconv.ParseFloat(latestRow[i], 64)
 			if err != nil {
