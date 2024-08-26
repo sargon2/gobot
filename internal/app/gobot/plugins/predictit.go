@@ -216,6 +216,9 @@ func getNateSilver() string {
 		if header == "modeldate" {
 			ret += "as of " + latestRow[i]
 		} else if !strings.HasSuffix(header, "_poll") {
+			if latestRow[i] == "" {
+				return "Nate Silver's CSV is missing the actual values"
+			}
 			valf, err := strconv.ParseFloat(latestRow[i], 64)
 			if err != nil {
 				return "Error parsing Nate Silver csv" + err.Error()
