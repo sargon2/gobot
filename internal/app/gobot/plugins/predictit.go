@@ -186,14 +186,14 @@ func getNateSilver() string {
 
 	contents, err := getURLContents("https://static.dwcdn.net/data/wB0Zh.csv")
 	if err != nil {
-		return "Error getting Nate Silver" + err.Error()
+		return "Error getting Nate Silver csv: " + err.Error()
 	}
 
 	// Read CSV data
 	reader := csv.NewReader(strings.NewReader(string(contents)))
 	records, err := reader.ReadAll()
 	if err != nil {
-		return "Error getting Nate Silver" + err.Error()
+		return "Error reading Nate Silver csv: " + err.Error()
 	}
 
 	// Get the header row and the last data row
@@ -221,7 +221,7 @@ func getNateSilver() string {
 			}
 			valf, err := strconv.ParseFloat(latestRow[i], 64)
 			if err != nil {
-				return "Error parsing Nate Silver csv" + err.Error()
+				return "Error parsing Nate Silver csv: " + err.Error()
 			}
 			results = append(results, resultData{name: header, val: valf})
 		}
