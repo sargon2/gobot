@@ -179,12 +179,11 @@ func getPolymarket() string {
 
 func getNateSilver() string {
 	// https://www.natesilver.net/p/nate-silver-2024-president-election-polls-model
-	// https://datawrapper.dwcdn.net/wB0Zh/16/
-	// https://static.dwcdn.net/data/wB0Zh.csv
+	// https://static.dwcdn.net/data/kFsH6.csv
 
 	ret := ""
 
-	contents, err := getURLContents("https://static.dwcdn.net/data/wB0Zh.csv")
+	contents, err := getURLContents("https://static.dwcdn.net/data/kFsH6.csv")
 	if err != nil {
 		return "Error getting Nate Silver csv: " + err.Error()
 	}
