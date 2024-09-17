@@ -117,8 +117,15 @@ func getFiveThirtyEight() (string, error) {
 	// })
 	content := ""
 	suspended := ""
+	updated := ""
 	cly.OnHTML("div#forecast-suspended-box", func(e *colly.HTMLElement) {
 		suspended = e.Text
+	})
+	cly.OnHTML("div.timestamp-container", func(e *colly.HTMLElement) {
+		updated = strings.Join(e.ChildTexts("p"), " ")
+		updated = strings.ReplaceAll(updated, "UPDATED", "updated")
+		updated = strings.ReplaceAll(updated, "AM", "am")
+		updated = strings.ReplaceAll(updated, "PM", "pm")
 	})
 	cly.OnHTML("div.odds-text-large.mb-10", func(e *colly.HTMLElement) {
 		content = strings.Join(e.ChildTexts("div"), " ")
@@ -129,6 +136,9 @@ func getFiveThirtyEight() (string, error) {
 		return suspended, nil
 	}
 	if content != "" {
+		if updated != "" {
+			return updated + "\n" + content, nil
+		}
 		return content, nil
 	}
 	return "", fmt.Errorf("Div not found")
