@@ -189,11 +189,11 @@ func getPolymarket() string {
 
 func getNateSilver() string {
 	// https://www.natesilver.net/p/nate-silver-2024-president-election-polls-model
-	// https://static.dwcdn.net/data/kFsH6.csv
 
 	ret := ""
 
-	contents, err := getURLContents("https://static.dwcdn.net/data/kFsH6.csv")
+	data_source_id := "VK7wA"
+	contents, err := getURLContents("https://static.dwcdn.net/data/" + data_source_id + ".csv")
 	if err != nil {
 		return "Error getting Nate Silver csv: " + err.Error()
 	}
@@ -223,7 +223,7 @@ func getNateSilver() string {
 			continue
 		}
 		if header == "modeldate" {
-			ret += "as of " + latestRow[i]
+			ret += "as of " + latestRow[i] + " (" + data_source_id + ")"
 		} else if !strings.HasSuffix(header, "_poll") {
 			if latestRow[i] == "" {
 				continue
