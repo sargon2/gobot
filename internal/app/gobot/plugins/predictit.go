@@ -38,6 +38,11 @@ func NewPredictit(hub *gobot.Hub) *Predictit {
 }
 
 func (p *Predictit) handleMessage(source *gobot.MessageSource, message string) {
+	p.hub.Message(source, "Trump won the popular vote and the presidency, and Republicans won control of the House, the Senate, and the Supreme Court.")
+	return
+}
+
+func (p *Predictit) handleMessageOld(source *gobot.MessageSource, message string) {
 	contents, err := getURLContents("https://www.predictit.org/api/marketdata/markets/7456")
 	if err != nil {
 		p.hub.Message(source, "Error! "+err.Error())
